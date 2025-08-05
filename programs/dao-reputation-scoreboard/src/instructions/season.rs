@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -154,7 +153,7 @@ pub struct StartNewSeason<'info> {
         init,
         payer = admin,
         space = SeasonData::LEN,
-        seeds = [b"season_data", &season_id.to_le_bytes()],
+        seeds = [b"season_data", &season_id.to_le_bytes()[..]], // Fixed: Use slice to handle array size
         bump
     )]
     pub season_data: Account<'info, SeasonData>,
@@ -180,7 +179,7 @@ pub struct EndCurrentSeason<'info> {
 
     #[account(
         mut,
-        seeds = [b"season_data", &season_id.to_le_bytes()],
+        seeds = [b"season_data", &season_id.to_le_bytes()[..]], // Fixed: Use slice to handle array size
         bump
     )]
     pub season_data: Account<'info, SeasonData>,
@@ -201,7 +200,7 @@ pub struct GetSeasonInfo<'info> {
     pub config: Account<'info, ReputationConfig>,
 
     #[account(
-        seeds = [b"season_data", &season_id.to_le_bytes()],
+        seeds = [b"season_data", &season_id.to_le_bytes()[..]], // Fixed: Use slice to handle array size
         bump
     )]
     pub season_data: Account<'info, SeasonData>,

@@ -6,6 +6,7 @@ pub mod errors;
 pub mod utils;
 
 use instructions::*;
+use state::*;
 
 // Replace this with the output from solana-keygen pubkey command
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");

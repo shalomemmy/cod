@@ -88,14 +88,13 @@ pub fn get_config(ctx: Context<GetConfig>) -> Result<ReputationConfigView> {
         min_reputation_to_vote: config.min_reputation_to_vote,
         category_weights: config.category_weights,
         role_thresholds: config.role_thresholds,
+        decay_rate: config.decay_rate,
+        decay_enabled: config.decay_enabled,
+        total_users: config.total_users as u32,
         current_season: config.current_season,
         season_start: config.season_start,
         season_duration: config.season_duration,
-        total_users: config.total_users,
-        decay_rate: config.decay_rate,
-        decay_enabled: config.decay_enabled,
-        initialized_at: config.initialized_at,
-        last_updated: config.last_updated,
+        paused: !config.decay_enabled,
     };
 
     Ok(config_view)
@@ -153,25 +152,6 @@ pub fn set_system_pause(
     );
 
     Ok(())
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct ReputationConfigView {
-    pub admin: Pubkey,
-    pub voting_cooldown: u64,
-    pub min_account_age: u64,
-    pub daily_vote_limit: u8,
-    pub min_reputation_to_vote: u64,
-    pub category_weights: [u16; 4],
-    pub role_thresholds: [u64; 5],
-    pub current_season: u32,
-    pub season_start: i64,
-    pub season_duration: u64,
-    pub total_users: u64,
-    pub decay_rate: u16,
-    pub decay_enabled: bool,
-    pub initialized_at: i64,
-    pub last_updated: i64,
 }
 
 #[derive(Accounts)]

@@ -127,21 +127,21 @@ pub fn cast_vote(
 pub struct CastVote<'info> {
     #[account(
         seeds = [b"reputation_config"],
-        bump
+        bump = config_bump
     )]
     pub config: Account<'info, ReputationConfig>,
 
     #[account(
         mut,
         seeds = [b"user_reputation", voter.key().as_ref()],
-        bump
+        bump = voter_reputation_bump
     )]
     pub voter_reputation: Account<'info, UserReputation>,
 
     #[account(
         mut,
         seeds = [b"user_reputation", target.key().as_ref()],
-        bump
+        bump = target_reputation_bump
     )]
     pub target_reputation: Account<'info, UserReputation>,
 
@@ -150,7 +150,7 @@ pub struct CastVote<'info> {
         payer = voter,
         space = VotingRecord::LEN,
         seeds = [b"voting_record", voter.key().as_ref(), target.key().as_ref()],
-        bump
+        bump = voting_record_bump
     )]
     pub voting_record: Account<'info, VotingRecord>,
 
@@ -161,4 +161,10 @@ pub struct CastVote<'info> {
     pub target: AccountInfo<'info>,
     
     pub system_program: Program<'info, System>,
+
+    // Bump seeds
+    pub config_bump: u8,
+    pub voter_reputation_bump: u8,
+    pub target_reputation_bump: u8,
+    pub voting_record_bump: u8,
 }

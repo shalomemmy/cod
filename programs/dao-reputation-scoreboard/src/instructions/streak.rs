@@ -218,7 +218,7 @@ pub fn bulk_update_streaks(
     Ok(())
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug)]
 pub enum StreakLeaderboardType {
     CurrentStreak,
     LongestStreak,
@@ -293,7 +293,7 @@ pub struct ResetUserStreak<'info> {
 
 #[derive(Accounts)]
 #[instruction(leaderboard_type: StreakLeaderboardType)]
-pub struct GetStreakLeaderboard<'info> {
+pub struct GetStreakLeaderboard {
     // No specific accounts needed for leaderboard query
 }
 

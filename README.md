@@ -434,4 +434,4 @@ Built with ❤️ by the DAO Reputation team for the Solana ecosystem.
 
 ---
 
-**Note:** This is a production-ready template that Solana DAOs can fork and customize for their specific needs. The focus is on security, efficiency, and developer experience.# cod
+**Note:** This is a production-ready template that Solana DAOs can fork and customize for their specific needs. The focus is on security, efficiency, and developer experience.

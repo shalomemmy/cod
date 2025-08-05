@@ -153,7 +153,7 @@ pub struct ExportReputation<'info> {
 
 #[derive(Accounts)]
 #[instruction(certificate: ReputationCertificate)]
-pub struct VerifyReputationCertificate<'info> {
+pub struct VerifyReputationCertificate {
     // No specific accounts needed for verification
 }
 

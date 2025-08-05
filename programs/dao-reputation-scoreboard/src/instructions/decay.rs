@@ -42,14 +42,21 @@ pub fn apply_reputation_decay(
 
     // Apply decay to all category points
     let mut total_decayed = 0u64;
-    for (i, points) in user_reputation.category_points.iter_mut().enumerate() {
+    let mut new_category_points = user_reputation.category_points;
+    let mut new_raw_votes = user_reputation.raw_votes;
+
+    for (i, points) in new_category_points.iter_mut().enumerate() {
         let original_points = *points;
         *points = (original_points * decay_factor) / 10000;
         total_decayed += original_points - *points;
         
         // Update raw votes proportionally
-        user_reputation.raw_votes[i] = (user_reputation.raw_votes[i] * decay_factor) / 10000;
+        new_raw_votes[i] = (new_raw_votes[i] * decay_factor) / 10000;
     }
+
+    // Update the user reputation with new values
+    user_reputation.category_points = new_category_points;
+    user_reputation.raw_votes = new_raw_votes;
 
     // Recalculate total score with new category points
     user_reputation.calculate_total_score(&config.category_weights);

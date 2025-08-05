@@ -151,7 +151,7 @@ pub struct StartNewSeason<'info> {
         init,
         payer = admin,
         space = SeasonData::LEN,
-        seeds = [b"season_data", &(config.current_season + 1).to_le_bytes()],
+        seeds = [b"season_data", &season_name.as_bytes()[..std::cmp::min(season_name.len(), 32)]],
         bump
     )]
     pub season_data: Account<'info, SeasonData>,

@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -182,11 +181,18 @@ pub fn get_decay_status(
     let config = &ctx.accounts.config;
     let current_time = ReputationUtils::get_current_timestamp();
 
-    let mut decay_statuses = Vec::new();
+    // Limit the number of users to process to avoid stack overflow
+    let limited_users = if users.len() > 10 {
+        &users[0..10]
+    } else {
+        &users[..]
+    };
+
+    let mut decay_statuses = Vec::with_capacity(limited_users.len());
 
     // In a real implementation, you would load each user's reputation account
     // For this example, we'll return mock data
-    for user in users.iter().take(10) { // Limit to prevent excessive compute
+    for user in limited_users {
         let status = DecayStatus {
             user: *user,
             days_since_activity: 7, // Mock data
@@ -209,17 +215,17 @@ pub fn get_decay_status(
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct DecayPreview {
-    pub user: Pubkey,
-    pub current_total_score: u64,
-    pub projected_total_score: u64,
-    pub current_role_level: u8,
-    pub projected_role_level: u8,
-    pub days_inactive: u32,
-    pub total_points_to_decay: u64,
-    pub decay_factor: u64,
-    pub decay_enabled: bool,
-}
+// pub struct DecayPreview {
+//     pub user: Pubkey,
+//     pub current_total_score: u64,
+//     pub projected_total_score: u64,
+//     pub current_role_level: u8,
+//     pub projected_role_level: u8,
+//     pub days_inactive: u32,
+//     pub total_points_to_decay: u64,
+//     pub decay_factor: u64,
+//     pub decay_enabled: bool,
+// }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct DecayStatus {

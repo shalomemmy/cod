@@ -247,13 +247,13 @@ pub fn revoke_achievement(
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct AchievementProgress {
-    pub achievement_type: AchievementType,
-    pub earned: bool,
-    pub current_progress: u64,
-    pub required_progress: u64,
-    pub progress_percentage: u8,
-}
+// pub struct AchievementProgress {
+//     pub achievement_type: AchievementType,
+//     pub earned: bool,
+//     pub current_progress: u64,
+//     pub required_progress: u64,
+//     pub progress_percentage: u8,
+// }
 
 #[derive(Accounts)]
 #[instruction(user: Pubkey, achievement_type: AchievementType)]

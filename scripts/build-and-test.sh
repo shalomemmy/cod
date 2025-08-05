@@ -50,18 +50,47 @@ fi
 
 # Step 7: Run TypeScript compilation check
 echo "🔍 Checking TypeScript compilation..."
-npx tsc --noEmit
+if npx tsc --noEmit; then
+    echo "✅ TypeScript compilation successful"
+else
+    echo "❌ TypeScript compilation failed"
+    echo "Please fix TypeScript errors before proceeding"
+    exit 1
+fi
 
-# Step 8: Run tests (skip if no local validator)
+# Step 8: Check if IDL and types were generated
+echo "🔍 Verifying build artifacts..."
+if [ ! -f "target/idl/dao_reputation_scoreboard.json" ]; then
+    echo "❌ IDL file not generated"
+    exit 1
+fi
+
+if [ ! -f "target/types/dao_reputation_scoreboard.ts" ]; then
+    echo "❌ TypeScript types not generated"
+    exit 1
+fi
+
+# Step 9: Run tests (skip if no local validator)
 echo "🧪 Running tests..."
 if command -v solana-test-validator &> /dev/null; then
     echo "Running full test suite with local validator..."
-    anchor test
+    # Use timeout to prevent hanging
+    timeout 300 anchor test || {
+        echo "❌ Tests failed or timed out after 5 minutes"
+        echo "Check test logs for more details"
+        exit 1
+    }
 else
     echo "⚠️  Local validator not found, skipping integration tests"
     echo "   To run full tests, install solana-test-validator"
     echo "   For now, running syntax validation only..."
-    npx ts-node --transpile-only tests/dao-reputation-scoreboard.ts || echo "✓ Syntax validation passed"
+    if npx ts-node --transpile-only tests/dao-reputation-scoreboard.ts 2>/dev/null; then
+        echo "✓ Test syntax validation passed"
+    else
+        echo "❌ Test syntax validation failed"
+        echo "Check your test file for syntax errors"
+        exit 1
+    fi
 fi
 
 echo ""

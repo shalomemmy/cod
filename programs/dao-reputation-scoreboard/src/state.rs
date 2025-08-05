@@ -382,3 +382,100 @@ pub struct BulkReputationUpdate {
     pub reason: String,
 }
 
+/// Streak leaderboard type
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, Default)]
+pub enum StreakLeaderboardType {
+    #[default]
+    CurrentStreak,
+    LongestStreak,
+    StreakBonus,
+}
+
+/// Streak leaderboard entry
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct StreakLeaderboardEntry {
+    pub user: Pubkey,
+    pub current_streak: u32,
+    pub longest_streak: u32,
+    pub streak_bonus: u64,
+    pub rank: u32,
+}
+
+/// Streak information
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct StreakInfo {
+    pub current_streak: u32,
+    pub longest_streak: u32,
+    pub streak_bonus: u64,
+    pub last_activity: i64,
+    pub is_active: bool,
+}
+
+/// Decay preview information
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct DecayPreview {
+    pub current_points: [u64; 4],
+    pub points_after_decay: [u64; 4],
+    pub decay_amount: [u64; 4],
+    pub days_since_activity: u64,
+    pub will_decay: bool,
+}
+
+/// Decay status information
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct DecayStatus {
+    pub user: Pubkey,
+    pub last_activity: i64,
+    pub days_inactive: u64,
+    pub decay_pending: bool,
+    pub next_decay_amount: [u64; 4],
+}
+
+/// Achievement progress information
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct AchievementProgress {
+    pub achievement_type: AchievementType,
+    pub is_earned: bool,
+    pub progress_value: u64,
+    pub required_value: u64,
+    pub progress_percentage: u8,
+}
+
+/// Achievement award structure for bulk operations
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+pub struct AchievementAward {
+    pub user: Pubkey,
+    pub achievement_type: AchievementType,
+}
+
+/// Season information
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
+pub struct SeasonInfo {
+    pub season_id: u32,
+    pub season_name: String,
+    pub start_time: i64,
+    pub end_time: i64,
+    pub is_active: bool,
+    pub total_participants: u32,
+    pub days_remaining: u32,
+}
+
+/// Reputation configuration view (for external consumption)
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
+pub struct ReputationConfigView {
+    pub admin: Pubkey,
+    pub voting_cooldown: u64,
+    pub min_account_age: u64,
+    pub daily_vote_limit: u8,
+    pub min_reputation_to_vote: u64,
+    pub category_weights: [u16; 4],
+    pub role_thresholds: [u64; 5],
+    pub decay_rate: u16,
+    pub decay_enabled: bool,
+    pub total_users: u32,
+    pub current_season: u32,
+    pub season_start: i64,
+    pub season_duration: u64,
+    pub paused: bool,
+}
+

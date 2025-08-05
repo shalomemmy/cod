@@ -40,7 +40,7 @@ pub fn export_reputation(ctx: Context<ExportReputation>) -> Result<ReputationCer
 
 /// Verify a reputation certificate's authenticity
 pub fn verify_reputation_certificate(
-    ctx: Context<VerifyReputationCertificate>,
+    _ctx: Context<VerifyReputationCertificate>,
     certificate: ReputationCertificate,
 ) -> Result<bool> {
     // Regenerate hash with certificate data

@@ -426,7 +426,7 @@ describe("DAO Reputation Scoreboard", () => {
   describe("Seasonal System", () => {
     it("Should start new season successfully", async () => {
       await program.methods
-        .startNewSeason("Test Season 2", 60) // 60 days
+        .startNewSeason("Test Season 2", 60, 2) // 60 days, season 2
         .accounts({
           config: configPDA,
           seasonData: PublicKey.findProgramAddressSync(
@@ -446,7 +446,7 @@ describe("DAO Reputation Scoreboard", () => {
     it("Should prevent non-admin from starting seasons", async () => {
       try {
         await program.methods
-          .startNewSeason("Unauthorized Season", 30)
+          .startNewSeason("Unauthorized Season", 30, 3)
           .accounts({
             config: configPDA,
             seasonData: PublicKey.findProgramAddressSync(

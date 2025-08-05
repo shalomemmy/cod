@@ -6,11 +6,11 @@ use crate::utils::*;
 /// Get paginated leaderboard data
 pub fn get_leaderboard(
     ctx: Context<GetLeaderboard>,
-    category: Option<ReputationCategory>,
+    _category: Option<ReputationCategory>,
     page: u32,
     page_size: u8,
 ) -> Result<Vec<LeaderboardEntry>> {
-    let config = &ctx.accounts.config;
+    let _config = &ctx.accounts.config;
     
     // Validate pagination parameters
     ReputationUtils::validate_pagination(page, page_size)?;

@@ -148,7 +148,7 @@ pub fn reset_user_streak(
 
 /// Get streak leaderboard (top streaks)
 pub fn get_streak_leaderboard(
-    ctx: Context<GetStreakLeaderboard>,
+    _ctx: Context<GetStreakLeaderboard>,
     leaderboard_type: StreakLeaderboardType,
 ) -> Result<Vec<StreakLeaderboardEntry>> {
     // In a real implementation, this would query all user reputation accounts

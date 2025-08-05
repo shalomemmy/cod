@@ -92,6 +92,19 @@ pub fn cast_vote(
         if is_upvote { total_points } else { 0 },
     )?;
 
+    // Initialize voting record if needed
+    if voting_record.voter == Pubkey::default() {
+        voting_record.voter = ctx.accounts.voter.key();
+        voting_record.target = ctx.accounts.target.key();
+        voting_record.last_vote = 0;
+        voting_record.daily_votes = 0;
+        voting_record.last_daily_reset = current_time;
+        voting_record.total_votes_on_target = 0;
+        voting_record.vote_history = [VoteHistoryEntry::default(); 10];
+        voting_record.history_index = 0;
+        voting_record.reserved = [0; 32];
+    }
+
     // Update voting record
     voting_record.last_vote = current_time;
     voting_record.daily_votes += 1;
@@ -127,21 +140,21 @@ pub fn cast_vote(
 pub struct CastVote<'info> {
     #[account(
         seeds = [b"reputation_config"],
-        bump = config_bump
+        bump
     )]
     pub config: Account<'info, ReputationConfig>,
 
     #[account(
         mut,
         seeds = [b"user_reputation", voter.key().as_ref()],
-        bump = voter_reputation_bump
+        bump
     )]
     pub voter_reputation: Account<'info, UserReputation>,
 
     #[account(
         mut,
         seeds = [b"user_reputation", target.key().as_ref()],
-        bump = target_reputation_bump
+        bump
     )]
     pub target_reputation: Account<'info, UserReputation>,
 
@@ -150,7 +163,7 @@ pub struct CastVote<'info> {
         payer = voter,
         space = VotingRecord::LEN,
         seeds = [b"voting_record", voter.key().as_ref(), target.key().as_ref()],
-        bump = voting_record_bump
+        bump
     )]
     pub voting_record: Account<'info, VotingRecord>,
 
@@ -161,10 +174,4 @@ pub struct CastVote<'info> {
     pub target: AccountInfo<'info>,
     
     pub system_program: Program<'info, System>,
-
-    // Bump seeds
-    pub config_bump: u8,
-    pub voter_reputation_bump: u8,
-    pub target_reputation_bump: u8,
-    pub voting_record_bump: u8,
 }

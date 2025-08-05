@@ -151,17 +151,17 @@ class SystemInitializer {
     }
   }
 
-  async startInitialSeason(): Promise<void> {
+  async startInitialSeason(seasonId: number): Promise<void> {
     console.log("\n🏁 Starting initial season...");
 
     const [seasonDataPDA] = PublicKey.findProgramAddressSync(
-      [Buffer.from("season_data"), Buffer.from([1, 0, 0, 0])], // Season 1
+      [Buffer.from("season_data"), Buffer.from([seasonId, 0, 0, 0])], 
       this.program.programId
     );
 
     try {
       const tx = await this.program.methods
-        .startNewSeason("Genesis Season", 90) // 90 days
+        .startNewSeason("Genesis Season", 90, seasonId) // 90 days
         .accounts({
           config: PublicKey.findProgramAddressSync(
             [Buffer.from("reputation_config")],
@@ -266,7 +266,7 @@ async function main() {
     const initializer = new SystemInitializer(connection, adminKeypair, programId, selectedConfig);
     
     await initializer.initialize();
-    await initializer.startInitialSeason();
+    await initializer.startInitialSeason(1);
     await initializer.verifyInitialization();
 
     console.log("\n🎉 System initialization completed successfully!");

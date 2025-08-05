@@ -306,21 +306,17 @@ export class ReputationManager {
   /**
    * Start a new competitive season (admin only)
    */
-  async startNewSeason(seasonName: string, durationDays: number): Promise<void> {
+  async startNewSeason(seasonName: string, durationDays: number, seasonId: number): Promise<void> {
     console.log(`🏁 Starting new season: ${seasonName} (${durationDays} days)`);
 
-    // Get current season number from config
-    const config = await this.program.account.reputationConfig.fetch(this.configPDA);
-    const nextSeason = config.currentSeason + 1;
-
     const [seasonDataPDA] = PublicKey.findProgramAddressSync(
-      [Buffer.from("season_data"), Buffer.from(nextSeason.toString().padStart(4, '0'))],
+      [Buffer.from("season_data"), Buffer.from([seasonId, 0, 0, 0])],
       this.program.programId
     );
 
     try {
       const tx = await this.program.methods
-        .startNewSeason(seasonName, durationDays)
+        .startNewSeason(seasonName, durationDays, seasonId)
         .accounts({
           config: this.configPDA,
           seasonData: seasonDataPDA,
@@ -443,7 +439,7 @@ async function runExample() {
 
     // 8. Start new season
     console.log("\n🏁 Starting new season...");
-    await reputationManager.startNewSeason("Example Season", 30);
+    await reputationManager.startNewSeason("Example Season", 30, 2);
 
     // 9. Get system configuration
     console.log("\n⚙️  System configuration:");

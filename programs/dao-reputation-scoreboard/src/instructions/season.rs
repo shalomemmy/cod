@@ -8,6 +8,7 @@ pub fn start_new_season(
     ctx: Context<StartNewSeason>,
     season_name: String,
     duration_days: u32,
+    season_id: u32,
 ) -> Result<()> {
     let config = &mut ctx.accounts.config;
     let season_data = &mut ctx.accounts.season_data;
@@ -22,14 +23,15 @@ pub fn start_new_season(
     // Validate season parameters
     ReputationUtils::validate_string_length(&season_name, 50)?;
     require!(duration_days > 0 && duration_days <= 365, ReputationError::SeasonDurationTooLong);
+    require!(season_id > config.current_season, ReputationError::InvalidConfigurationValues);
 
     // Update config for new season
-    config.current_season += 1;
+    config.current_season = season_id;
     config.season_start = current_time;
     config.season_duration = (duration_days as u64) * 86400; // Convert days to seconds
 
     // Initialize season data
-    season_data.season_id = config.current_season;
+    season_data.season_id = season_id;
     season_data.season_name = season_name.clone();
     season_data.start_time = current_time;
     season_data.end_time = current_time + config.season_duration as i64;
@@ -44,7 +46,7 @@ pub fn start_new_season(
     msg!(
         "New season started: {} (ID: {}, Duration: {} days)",
         season_name,
-        config.current_season,
+        season_id,
         duration_days
     );
 
@@ -52,7 +54,7 @@ pub fn start_new_season(
 }
 
 /// End current season and distribute rewards
-pub fn end_current_season(ctx: Context<EndCurrentSeason>) -> Result<()> {
+pub fn end_current_season(ctx: Context<EndCurrentSeason>, season_id: u32) -> Result<()> {
     let config = &mut ctx.accounts.config;
     let season_data = &mut ctx.accounts.season_data;
 
@@ -78,8 +80,8 @@ pub fn end_current_season(ctx: Context<EndCurrentSeason>) -> Result<()> {
 }
 
 /// Get current season information
-pub fn get_season_info(ctx: Context<GetSeasonInfo>) -> Result<SeasonInfo> {
-    let config = &ctx.accounts.config;
+pub fn get_season_info(ctx: Context<GetSeasonInfo>, season_id: u32) -> Result<SeasonInfo> {
+    let _config = &ctx.accounts.config;
     let season_data = &ctx.accounts.season_data;
     let current_time = ReputationUtils::get_current_timestamp();
 
@@ -138,7 +140,7 @@ pub struct SeasonInfo {
 }
 
 #[derive(Accounts)]
-#[instruction(season_name: String, duration_days: u32)]
+#[instruction(season_name: String, duration_days: u32, season_id: u32)]
 pub struct StartNewSeason<'info> {
     #[account(
         mut,
@@ -151,7 +153,7 @@ pub struct StartNewSeason<'info> {
         init,
         payer = admin,
         space = SeasonData::LEN,
-        seeds = [b"season_data", &season_name.as_bytes()[..std::cmp::min(season_name.len(), 32)]],
+        seeds = [b"season_data", &season_id.to_le_bytes()],
         bump
     )]
     pub season_data: Account<'info, SeasonData>,
@@ -166,6 +168,7 @@ pub struct StartNewSeason<'info> {
 }
 
 #[derive(Accounts)]
+#[instruction(season_id: u32)]
 pub struct EndCurrentSeason<'info> {
     #[account(
         mut,
@@ -176,7 +179,7 @@ pub struct EndCurrentSeason<'info> {
 
     #[account(
         mut,
-        seeds = [b"season_data", &config.current_season.to_le_bytes()],
+        seeds = [b"season_data", &season_id.to_le_bytes()],
         bump
     )]
     pub season_data: Account<'info, SeasonData>,
@@ -188,6 +191,7 @@ pub struct EndCurrentSeason<'info> {
 }
 
 #[derive(Accounts)]
+#[instruction(season_id: u32)]
 pub struct GetSeasonInfo<'info> {
     #[account(
         seeds = [b"reputation_config"],
@@ -196,7 +200,7 @@ pub struct GetSeasonInfo<'info> {
     pub config: Account<'info, ReputationConfig>,
 
     #[account(
-        seeds = [b"season_data", &config.current_season.to_le_bytes()],
+        seeds = [b"season_data", &season_id.to_le_bytes()],
         bump
     )]
     pub season_data: Account<'info, SeasonData>,

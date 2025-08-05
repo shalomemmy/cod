@@ -1,8 +1,9 @@
 use anchor_lang::prelude::*;
 
 /// Reputation categories for multi-dimensional scoring
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub enum ReputationCategory {
+    #[default]
     Governance,
     Development,
     Community,
@@ -21,8 +22,9 @@ impl ReputationCategory {
 }
 
 /// Achievement types for gamification
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub enum AchievementType {
+    #[default]
     FirstVote,
     WeeklyStreak,
     MonthlyStreak,
@@ -256,11 +258,7 @@ impl VotingRecord {
 
     /// Add vote to history
     pub fn add_vote_to_history(&mut self, category: ReputationCategory, is_upvote: bool, timestamp: i64) {
-        let entry = VoteHistoryEntry {
-            category,
-            is_upvote,
-            timestamp,
-        };
+        let entry = VoteHistoryEntry::new(category, is_upvote, timestamp);
         
         self.vote_history[self.history_index as usize] = entry;
         self.history_index = (self.history_index + 1) % 10;
@@ -273,6 +271,16 @@ pub struct VoteHistoryEntry {
     pub category: ReputationCategory,
     pub is_upvote: bool,
     pub timestamp: i64,
+}
+
+impl VoteHistoryEntry {
+    pub fn new(category: ReputationCategory, is_upvote: bool, timestamp: i64) -> Self {
+        Self {
+            category,
+            is_upvote,
+            timestamp,
+        }
+    }
 }
 
 impl VoteHistoryEntry {
@@ -374,8 +382,3 @@ pub struct BulkReputationUpdate {
     pub reason: String,
 }
 
-impl Default for ReputationCategory {
-    fn default() -> Self {
-        ReputationCategory::Governance
-    }
-}

@@ -73,7 +73,7 @@ impl ReputationUtils {
         timestamp: i64,
         program_id: &Pubkey,
     ) -> [u8; 32] {
-        use anchor_lang::solana_program::hash::{hash, Hash};
+        use anchor_lang::solana_program::hash::hash;
         
         let mut data = Vec::new();
         data.extend_from_slice(&user.to_bytes());
@@ -228,7 +228,7 @@ impl ReputationUtils {
     }
 
     /// Validate pagination parameters
-    pub fn validate_pagination(page: u32, page_size: u8) -> Result<()> {
+    pub fn validate_pagination(_page: u32, page_size: u8) -> Result<()> {
         if page_size == 0 || page_size > 100 {
             return err!(ReputationError::InvalidPaginationParameters);
         }

@@ -35,7 +35,18 @@ cd ../..
 
 # Step 5: Build with Anchor
 echo "🏗️  Building with Anchor..."
-anchor build
+if anchor build 2>&1 | tee /tmp/anchor_build.log; then
+    # Count warnings but don't fail on them
+    WARNING_COUNT=$(grep -c "warning:" /tmp/anchor_build.log || echo "0")
+    if [ "$WARNING_COUNT" -gt 0 ]; then
+        echo "⚠️  Build completed with $WARNING_COUNT warnings (this is normal for Anchor projects)"
+    fi
+    echo "✅ Anchor build successful!"
+else
+    echo "❌ Anchor build failed"
+    echo "Check the build log for errors"
+    exit 1
+fi
 
 # Step 6: Verify the build was successful
 if [ -f "target/deploy/dao_reputation_scoreboard.so" ]; then

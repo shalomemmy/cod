@@ -55,7 +55,7 @@ pub fn start_new_season(
 }
 
 /// End current season and distribute rewards
-pub fn end_current_season(ctx: Context<EndCurrentSeason>, season_id: u32) -> Result<()> {
+pub fn end_current_season(ctx: Context<EndCurrentSeason>, _season_id: u32) -> Result<()> {
     let config = &mut ctx.accounts.config;
     let season_data = &mut ctx.accounts.season_data;
 
@@ -81,7 +81,7 @@ pub fn end_current_season(ctx: Context<EndCurrentSeason>, season_id: u32) -> Res
 }
 
 /// Get current season information
-pub fn get_season_info(ctx: Context<GetSeasonInfo>, season_id: u32) -> Result<SeasonInfo> {
+pub fn get_season_info(ctx: Context<GetSeasonInfo>, _season_id: u32) -> Result<SeasonInfo> {
     let _config = &ctx.accounts.config;
     let season_data = &ctx.accounts.season_data;
     let current_time = ReputationUtils::get_current_timestamp();

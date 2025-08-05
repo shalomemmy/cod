@@ -430,7 +430,7 @@ describe("DAO Reputation Scoreboard", () => {
         .accounts({
           config: configPDA,
           seasonData: PublicKey.findProgramAddressSync(
-            [Buffer.from("season_data"), Buffer.from([2, 0, 0, 0])], // season 2
+            [Buffer.from("season_data"), new Uint8Array([2, 0, 0, 0])], // season 2
             program.programId
           )[0],
           admin: admin.publicKey,
@@ -450,7 +450,7 @@ describe("DAO Reputation Scoreboard", () => {
           .accounts({
             config: configPDA,
             seasonData: PublicKey.findProgramAddressSync(
-              [Buffer.from("season_data"), Buffer.from([3, 0, 0, 0])],
+              [Buffer.from("season_data"), new Uint8Array([3, 0, 0, 0])],
               program.programId
             )[0],
             admin: user1.publicKey, // Not admin

@@ -155,7 +155,7 @@ class SystemInitializer {
     console.log("\n🏁 Starting initial season...");
 
     const [seasonDataPDA] = PublicKey.findProgramAddressSync(
-      [Buffer.from("season_data"), Buffer.from([seasonId, 0, 0, 0])], 
+      [Buffer.from("season_data"), new Uint8Array([seasonId, 0, 0, 0])], 
       this.program.programId
     );
 

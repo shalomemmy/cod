@@ -5,6 +5,18 @@ pub mod state;
 pub mod errors;
 pub mod utils;
 
+// Import specific types from state to avoid ambiguity
+use state::{
+    ReputationCategory, AchievementType,
+    LeaderboardEntry, ReputationCertificate, ReputationConfigUpdate, BulkReputationUpdate,
+    SeasonInfo, DecayPreview, DecayStatus, AchievementProgress, StreakInfo,
+    StreakLeaderboardType, StreakLeaderboardEntry, ReputationConfigView
+};
+
+// Import AchievementAward from instructions to avoid type mismatch
+use instructions::bulk_operations::AchievementAward;
+
+// Use instructions module functions
 use instructions::*;
 
 // Replace this with the output from solana-keygen pubkey command
@@ -153,7 +165,8 @@ pub mod dao_reputation_scoreboard {
         season_id: u32,
     ) -> Result<SeasonInfo> {
         instructions::get_season_info(ctx, season_id)
-    }
+    }pub struct StreakInfo {
+
 
     /// Reset user seasonal points (admin only)
     pub fn reset_seasonal_points(

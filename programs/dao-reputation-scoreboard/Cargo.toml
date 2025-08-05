@@ -16,6 +16,6 @@ cpi = ["no-entrypoint"]
 default = []
 
 [dependencies]
-anchor-lang = "0.29.0"
-anchor-spl = "0.29.0"
-solana-program = "~1.17.0"
+anchor-lang = "0.31.1"
+anchor-spl = "0.31.1"
+# Remove solana-program as a direct dependency and use it through anchor-lang

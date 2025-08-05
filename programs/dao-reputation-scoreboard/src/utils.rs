@@ -73,7 +73,7 @@ impl ReputationUtils {
         timestamp: i64,
         program_id: &Pubkey,
     ) -> [u8; 32] {
-        use solana_program::hash::{hash, Hash};
+        use anchor_lang::solana_program::hash::{hash, Hash};
         
         let mut data = Vec::new();
         data.extend_from_slice(&user.to_bytes());

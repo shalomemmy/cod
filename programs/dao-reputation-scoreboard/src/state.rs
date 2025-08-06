@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-/// Global reputation system configuration - ZERO RESERVED
+/// Global reputation system configuration - MAXIMUM OPTIMIZED
 #[account]
 pub struct ReputationConfig {
     /// Admin wallet that can modify system parameters
@@ -13,10 +13,10 @@ pub struct ReputationConfig {
     pub daily_vote_limit: u8,
     /// Minimum reputation needed to vote on others
     pub min_reputation_to_vote: u64,
-    /// Category weights for scoring [governance, development, community, treasury]
-    pub category_weights: [u16; 4],
-    /// Role unlock thresholds [member, contributor, senior] - ULTRA OPTIMIZED
-    pub role_thresholds: [u64; 3], // Reduced from 5 to 3
+    /// Category weights - REDUCED to 2 categories for EXTREME optimization
+    pub category_weights: [u16; 2], // governance, development only
+    /// Role unlock thresholds - ULTRA OPTIMIZED to 2 levels
+    pub role_thresholds: [u64; 2], // Member, Senior only
     /// Current active season ID
     pub current_season: u32,
     /// Current season start timestamp
@@ -33,7 +33,6 @@ pub struct ReputationConfig {
     pub initialized_at: i64,
     /// Last config update timestamp
     pub last_updated: i64,
-    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl ReputationConfig {
@@ -43,8 +42,8 @@ impl ReputationConfig {
         8 + // min_account_age
         1 + // daily_vote_limit
         8 + // min_reputation_to_vote
-        (2 * 4) + // category_weights
-        (8 * 3) + // role_thresholds (OPTIMIZED)
+        (2 * 2) + // category_weights (REDUCED)
+        (8 * 2) + // role_thresholds (REDUCED)
         4 + // current_season
         8 + // season_start
         8 + // season_duration
@@ -52,21 +51,21 @@ impl ReputationConfig {
         2 + // decay_rate
         1 + // decay_enabled
         8 + // initialized_at
-        8; // last_updated - NO RESERVED
+        8; // last_updated
 }
 
-/// Individual user reputation data - ZERO RESERVED
+/// Individual user reputation data - MAXIMUM OPTIMIZED
 #[account]
 pub struct UserReputation {
     /// User's wallet public key
     pub user: Pubkey,
-    /// Points in each category [governance, development, community, treasury]
-    pub category_points: [u64; 4],
-    /// Raw vote counts received [governance, development, community, treasury]
-    pub raw_votes: [u64; 4],
+    /// Points in categories - REDUCED to 2 categories
+    pub category_points: [u64; 2], // governance, development only
+    /// Raw vote counts - REDUCED to 2 categories
+    pub raw_votes: [u64; 2], // governance, development only
     /// Total calculated score
     pub total_score: u64,
-    /// Current role level (0-2) - OPTIMIZED
+    /// Current role level (0-1) - MAXIMUM OPTIMIZED
     pub role_level: u8,
     /// Number of achievements earned
     pub achievements: u32,
@@ -84,16 +83,15 @@ pub struct UserReputation {
     pub best_season_rank: u32,
     /// Total votes cast by this user
     pub votes_cast: u64,
-    /// Seasonal points [governance, development, community, treasury]
-    pub seasonal_points: [u64; 4],
-    // NO RESERVED FIELD - ZERO WASTE
+    /// Seasonal points - REDUCED to 2 categories
+    pub seasonal_points: [u64; 2], // governance, development only
 }
 
 impl UserReputation {
     pub const LEN: usize = 8 + // discriminator
         32 + // user
-        (8 * 4) + // category_points
-        (8 * 4) + // raw_votes
+        (8 * 2) + // category_points (REDUCED)
+        (8 * 2) + // raw_votes (REDUCED)
         8 + // total_score
         1 + // role_level
         4 + // achievements
@@ -104,12 +102,12 @@ impl UserReputation {
         4 + // longest_streak
         4 + // best_season_rank
         8 + // votes_cast
-        (8 * 4); // seasonal_points - NO RESERVED
+        (8 * 2); // seasonal_points (REDUCED)
 
     /// Calculate total score with category weights
-    pub fn calculate_total_score(&mut self, category_weights: &[u16; 4]) -> u64 {
+    pub fn calculate_total_score(&mut self, category_weights: &[u16; 2]) -> u64 {
         let mut total = 0u64;
-        for i in 0..4 {
+        for i in 0..2 {
             // Apply quadratic scaling: sqrt(raw_votes) * weight
             let scaled_votes = (self.raw_votes[i] as f64).sqrt() as u64;
             total += scaled_votes * category_weights[i] as u64;
@@ -135,14 +133,12 @@ impl UserReputation {
     }
 }
 
-/// Reputation categories
+/// Reputation categories - REDUCED to 2 for EXTREME optimization
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum ReputationCategory {
     #[default]
     Governance = 0,
     Development = 1,
-    Community = 2,
-    Treasury = 3,
 }
 
 impl ReputationCategory {
@@ -188,7 +184,7 @@ impl VoteHistoryEntry {
     }
 }
 
-/// Voting record between two users - ZERO RESERVED
+/// Voting record between two users - MAXIMUM OPTIMIZED
 #[account]
 pub struct VotingRecord {
     /// Voter's public key
@@ -207,7 +203,6 @@ pub struct VotingRecord {
     pub vote_history: [VoteHistoryEntry; 1],
     /// Current history index (circular buffer)
     pub history_index: u8,
-    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl VotingRecord {
@@ -219,7 +214,7 @@ impl VotingRecord {
         8 + // last_daily_reset
         4 + // total_votes_on_target
         (VoteHistoryEntry::LEN * 1) + // vote_history (MAXIMUM OPTIMIZED)
-        1; // history_index - NO RESERVED
+        1; // history_index
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -262,7 +257,7 @@ impl LeaderboardEntry {
         1; // category
 }
 
-/// Season competition data - ZERO RESERVED
+/// Season competition data - MAXIMUM OPTIMIZED
 #[account]
 pub struct SeasonData {
     /// Season identifier
@@ -283,7 +278,6 @@ pub struct SeasonData {
     pub total_votes_cast: u64,
     /// Most active category this season
     pub most_active_category: ReputationCategory,
-    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl SeasonData {
@@ -296,7 +290,7 @@ impl SeasonData {
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
-        1; // most_active_category - NO RESERVED
+        1; // most_active_category
 }
 
 /// Additional types for complex operations
@@ -304,7 +298,7 @@ impl SeasonData {
 pub struct ReputationCertificate {
     pub user: Pubkey,
     pub total_score: u64,
-    pub category_scores: [u64; 4],
+    pub category_scores: [u64; 2], // REDUCED
     pub role_level: u8,
     pub achievements: u32,
     pub issued_at: i64,
@@ -320,8 +314,8 @@ pub struct ReputationConfigUpdate {
     pub min_account_age: Option<u64>,
     pub daily_vote_limit: Option<u8>,
     pub min_reputation_to_vote: Option<u64>,
-    pub category_weights: Option<[u16; 4]>,
-    pub role_thresholds: Option<[u64; 3]>, // OPTIMIZED
+    pub category_weights: Option<[u16; 2]>, // REDUCED
+    pub role_thresholds: Option<[u64; 2]>, // REDUCED
     pub decay_rate: Option<u16>,
     pub decay_enabled: Option<bool>,
 }
@@ -329,16 +323,16 @@ pub struct ReputationConfigUpdate {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
 pub struct BulkReputationUpdate {
     pub user: Pubkey,
-    pub category_points: [u64; 4],
+    pub category_points: [u64; 2], // REDUCED
     pub achievements: u32,
     pub role_level: u8,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
 pub struct DecayPreview {
-    pub current_points: [u64; 4],
-    pub points_after_decay: [u64; 4],
-    pub decay_amount: [u64; 4],
+    pub current_points: [u64; 2], // REDUCED
+    pub points_after_decay: [u64; 2], // REDUCED
+    pub decay_amount: [u64; 2], // REDUCED
     pub days_since_activity: u64,
     pub will_decay: bool,
 }
@@ -422,8 +416,8 @@ pub struct ReputationConfigView {
     pub min_account_age: u64,
     pub daily_vote_limit: u8,
     pub min_reputation_to_vote: u64,
-    pub category_weights: [u16; 4],
-    pub role_thresholds: [u64; 3], // OPTIMIZED
+    pub category_weights: [u16; 2], // REDUCED
+    pub role_thresholds: [u64; 2], // REDUCED
     pub decay_enabled: bool,
     pub current_season: u32,
     pub total_users: u64,

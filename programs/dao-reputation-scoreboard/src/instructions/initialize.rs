@@ -44,11 +44,8 @@ pub fn initialize_reputation_system(
     config.decay_enabled = true;
     config.initialized_at = current_time;
     config.last_updated = current_time;
-<<<<<<< HEAD
     config.reserved = [0; 16];
-=======
     config.reserved = [0; 4];
->>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 
     msg!("Reputation system initialized with admin: {}", ctx.accounts.admin.key());
     

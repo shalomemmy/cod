@@ -36,20 +36,14 @@ pub fn start_new_season(
     season_data.start_time = current_time;
     season_data.end_time = current_time + config.season_duration as i64;
     season_data.is_active = true;
-<<<<<<< HEAD
     season_data.leaderboard = [LeaderboardEntry::default(); 3];
-=======
     season_data.leaderboard = [LeaderboardEntry::default(); 1];
->>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
     season_data.total_participants = 0;
     season_data.rewards_distributed = false;
     season_data.total_votes_cast = 0;
     season_data.most_active_category = ReputationCategory::Governance;
-<<<<<<< HEAD
     season_data.reserved = [0; 16];
-=======
     season_data.reserved = [0; 4];
->>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 
     msg!(
         "New season started: {} (ID: {}, Duration: {} days)",

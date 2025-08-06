@@ -1,6 +1,5 @@
 
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -155,8 +154,6 @@ pub fn calculate_decay_preview(
     };
 
     Ok(preview)
-<<<<<<< HEAD
-=======
 }
 
 /// Reset decay for a user (admin function)
@@ -297,5 +294,4 @@ pub struct GetDecayStatus<'info> {
         bump
     )]
     pub config: Account<'info, ReputationConfig>,
->>>>>>> b04e86827bbb2587327daaf64456a655e4f6abb4
 }

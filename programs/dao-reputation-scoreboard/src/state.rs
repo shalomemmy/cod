@@ -69,7 +69,7 @@ pub struct ReputationConfig {
     /// Last config update timestamp
     pub last_updated: i64,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 128],
+    pub reserved: [u8; 32],
 }
 
 impl ReputationConfig {
@@ -89,7 +89,7 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
-        128; // reserved
+        32; // reserved
 }
 
 /// Individual user reputation data
@@ -404,10 +404,16 @@ pub struct StreakLeaderboardEntry {
 /// Streak information
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
 pub struct StreakInfo {
+    pub user: Pubkey,
     pub current_streak: u32,
     pub longest_streak: u32,
-    pub streak_bonus: u64,
+    pub days_since_last_activity: u32,
+    pub streak_at_risk: bool,
+    pub streak_broken: bool,
+    pub current_streak_bonus: u64,
+    pub next_day_bonus: u64,
     pub last_activity: i64,
+    pub streak_bonus: u64,
     pub is_active: bool,
 }
 

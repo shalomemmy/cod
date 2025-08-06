@@ -173,7 +173,7 @@ impl ReputationUtils {
 
     /// Sort leaderboard entries by total score (descending)
     pub fn sort_leaderboard(entries: &mut [LeaderboardEntry]) {
-        entries.sort_by(|a, b| b.total_score.cmp(&a.total_score));
+        entries.sort_by(|a, b| b.score.cmp(&a.score));
         
         // Update ranks
         for (i, entry) in entries.iter_mut().enumerate() {

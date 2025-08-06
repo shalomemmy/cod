@@ -33,7 +33,7 @@ pub struct ReputationConfig {
     pub initialized_at: i64,
     /// Last config update timestamp
     pub last_updated: i64,
-    /// Reserved space for future upgrades (OPTIMIZED)
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
     pub reserved: [u8; 4],
 }
 
@@ -54,7 +54,7 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
-        4; // reserved (OPTIMIZED)
+        4; // reserved (MAXIMUM OPTIMIZED)
 }
 
 /// Individual user reputation data
@@ -76,6 +76,8 @@ pub struct UserReputation {
     pub created_at: i64,
     /// Last activity timestamp
     pub last_activity: i64,
+    /// Last update timestamp
+    pub last_updated: i64,
     /// Current streak (consecutive days)
     pub current_streak: u32,
     /// Longest streak achieved
@@ -84,7 +86,9 @@ pub struct UserReputation {
     pub best_season_rank: u32,
     /// Total votes cast by this user
     pub votes_cast: u64,
-    /// Reserved space for future upgrades (OPTIMIZED)
+    /// Seasonal points [governance, development, community, treasury]
+    pub seasonal_points: [u64; 4],
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
     pub reserved: [u8; 4],
 }
 
@@ -98,11 +102,13 @@ impl UserReputation {
         4 + // achievements
         8 + // created_at
         8 + // last_activity
+        8 + // last_updated
         4 + // current_streak
         4 + // longest_streak
         4 + // best_season_rank
         8 + // votes_cast
-        4; // reserved (OPTIMIZED)
+        (8 * 4) + // seasonal_points
+        4; // reserved (MAXIMUM OPTIMIZED)
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, category_weights: &[u16; 4]) -> u64 {
@@ -143,6 +149,13 @@ pub enum ReputationCategory {
     Treasury = 3,
 }
 
+impl ReputationCategory {
+    /// Convert category to array index
+    pub fn to_index(&self) -> usize {
+        *self as usize
+    }
+}
+
 /// Achievement types 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum AchievementType {
@@ -154,6 +167,7 @@ pub enum AchievementType {
     ConsistentVoter = 4,
     CategoryExpert = 5,
     CommunityBuilder = 6,
+    SeasonWinner = 7,
 }
 
 /// Vote history entry
@@ -193,11 +207,11 @@ pub struct VotingRecord {
     pub last_daily_reset: i64,
     /// Total votes cast on this target
     pub total_votes_on_target: u32,
-    /// Vote history - OPTIMIZED to 1 entry
+    /// Vote history - MAXIMUM OPTIMIZED to 1 entry
     pub vote_history: [VoteHistoryEntry; 1],
     /// Current history index (circular buffer)
     pub history_index: u8,
-    /// Reserved space for future upgrades (OPTIMIZED)
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
     pub reserved: [u8; 4],
 }
 
@@ -209,9 +223,9 @@ impl VotingRecord {
         1 + // daily_votes
         8 + // last_daily_reset
         4 + // total_votes_on_target
-        (VoteHistoryEntry::LEN * 1) + // vote_history (OPTIMIZED)
+        (VoteHistoryEntry::LEN * 1) + // vote_history (MAXIMUM OPTIMIZED)
         1 + // history_index
-        4; // reserved (OPTIMIZED)
+        4; // reserved (MAXIMUM OPTIMIZED)
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -230,7 +244,7 @@ impl VotingRecord {
         }
     }
 
-    /// Add vote to history (OPTIMIZED for 1 entry)
+    /// Add vote to history (MAXIMUM OPTIMIZED for 1 entry)
     pub fn add_vote_to_history(&mut self, category: ReputationCategory, is_upvote: bool, timestamp: i64) {
         let entry = VoteHistoryEntry::new(category, is_upvote, timestamp);
         self.vote_history[0] = entry; // Always use index 0 for single entry
@@ -245,13 +259,17 @@ pub struct LeaderboardEntry {
     pub score: u64,
     pub rank: u32,
     pub category: ReputationCategory,
+    pub total_score: u64,
+    pub category_scores: [u64; 4],
 }
 
 impl LeaderboardEntry {
     pub const LEN: usize = 32 + // user
         8 + // score
         4 + // rank
-        1; // category
+        1 + // category
+        8 + // total_score
+        (8 * 4); // category_scores
 }
 
 /// Season competition data
@@ -259,15 +277,15 @@ impl LeaderboardEntry {
 pub struct SeasonData {
     /// Season identifier
     pub season_id: u32,
-    /// Season name - MAXIMUM OPTIMIZED to 4 bytes
-    pub season_name: [u8; 4],
+    /// Season name - MAXIMUM OPTIMIZED to 1 byte
+    pub season_name: [u8; 1],
     /// Season start timestamp
     pub start_time: i64,
     /// Season end timestamp
     pub end_time: i64,
     /// Whether season is currently active
     pub is_active: bool,
-    /// Top performers - OPTIMIZED to 1 entry
+    /// Top performers - MAXIMUM OPTIMIZED to 1 entry
     pub leaderboard: [LeaderboardEntry; 1],
     /// Total participants this season
     pub total_participants: u32,
@@ -277,23 +295,23 @@ pub struct SeasonData {
     pub total_votes_cast: u64,
     /// Most active category this season
     pub most_active_category: ReputationCategory,
-    /// Reserved space for future upgrades (OPTIMIZED)
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
     pub reserved: [u8; 4],
 }
 
 impl SeasonData {
     pub const LEN: usize = 8 + // discriminator
         4 + // season_id
-        4 + // season_name (MAXIMUM OPTIMIZED)
+        1 + // season_name (MAXIMUM OPTIMIZED)
         8 + // start_time
         8 + // end_time
         1 + // is_active
-        (LeaderboardEntry::LEN * 1) + // leaderboard (OPTIMIZED)
+        (LeaderboardEntry::LEN * 1) + // leaderboard (MAXIMUM OPTIMIZED)
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
-        4; // reserved (OPTIMIZED)
+        4; // reserved (MAXIMUM OPTIMIZED)
 }
 
 /// Additional types for complex operations
@@ -305,8 +323,10 @@ pub struct ReputationCertificate {
     pub role_level: u8,
     pub achievements: u32,
     pub issued_at: i64,
+    pub generated_at: i64,
     pub season_id: u32,
     pub signature_hash: [u8; 32],
+    pub program_id: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -327,6 +347,7 @@ pub struct BulkReputationUpdate {
     pub category_points: [u64; 4],
     pub achievements: u32,
     pub role_level: u8,
+    pub reason: [u8; 32], // Fixed size for Copy trait
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -344,6 +365,7 @@ pub struct DecayStatus {
     pub days_inactive: u32,
     pub decay_pending: bool,
     pub next_decay_amount: u64,
+    pub user: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -384,6 +406,9 @@ pub struct StreakLeaderboardEntry {
     pub streak_value: u32,
     pub rank: u32,
     pub is_active: bool,
+    pub current_streak: u32,
+    pub longest_streak: u32,
+    pub streak_bonus: u32,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -394,15 +419,17 @@ pub struct AchievementAward {
     pub season_id: u32,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default)]
 pub struct SeasonInfo {
     pub season_id: u32,
     pub name: String,
+    pub season_name: String,
     pub start_time: i64,
     pub end_time: i64,
     pub is_active: bool,
     pub total_participants: u32,
     pub total_votes: u64,
+    pub days_remaining: u64,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -417,4 +444,8 @@ pub struct ReputationConfigView {
     pub decay_enabled: bool,
     pub current_season: u32,
     pub total_users: u64,
+    pub decay_rate: u16,
+    pub season_start: i64,
+    pub season_duration: u64,
+    pub paused: bool,
 }

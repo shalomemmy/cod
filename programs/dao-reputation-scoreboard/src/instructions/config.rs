@@ -90,7 +90,7 @@ pub fn get_config(ctx: Context<GetConfig>) -> Result<ReputationConfigView> {
         role_thresholds: config.role_thresholds,
         decay_rate: config.decay_rate,
         decay_enabled: config.decay_enabled,
-        total_users: config.total_users as u32,
+        total_users: config.total_users,
         current_season: config.current_season,
         season_start: config.season_start,
         season_duration: config.season_duration,

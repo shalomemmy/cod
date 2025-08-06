@@ -32,17 +32,21 @@ pub fn start_new_season(
 
     // Initialize season data
     season_data.season_id = season_id;
-    season_data.season_name = season_name.clone();
+    // Truncate season name to fit 1 byte max
+    let name_bytes = season_name.as_bytes();
+    let mut name_array = [0u8; 1];
+    if !name_bytes.is_empty() {
+        name_array[0] = name_bytes[0];
+    }
+    season_data.season_name = name_array;
     season_data.start_time = current_time;
     season_data.end_time = current_time + config.season_duration as i64;
     season_data.is_active = true;
-    season_data.leaderboard = [LeaderboardEntry::default(); 3];
     season_data.leaderboard = [LeaderboardEntry::default(); 1];
     season_data.total_participants = 0;
     season_data.rewards_distributed = false;
     season_data.total_votes_cast = 0;
     season_data.most_active_category = ReputationCategory::Governance;
-    season_data.reserved = [0; 16];
     season_data.reserved = [0; 4];
 
     msg!(
@@ -89,7 +93,7 @@ pub fn get_season_info(ctx: Context<GetSeasonInfo>, _season_id: u32) -> Result<S
 
     let season_info = SeasonInfo {
         season_id: season_data.season_id,
-        season_name: season_data.season_name.clone(),
+        season_name: String::from_utf8_lossy(&season_data.season_name).to_string(),
         start_time: season_data.start_time,
         end_time: season_data.end_time,
         is_active: season_data.is_active && current_time < season_data.end_time,

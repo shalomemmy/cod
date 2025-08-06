@@ -209,7 +209,7 @@ pub fn get_decay_status(
             last_activity: current_time - (7 * 86400), // Mock: 7 days ago
             days_inactive: 7,
             decay_pending: config.decay_enabled,
-            next_decay_amount: [100, 150, 200, 50], // Mock decay amounts for each category
+            next_decay_amount: 100, // Mock single decay amount
         };
         decay_statuses.push(status);
     }

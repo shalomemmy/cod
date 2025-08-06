@@ -233,7 +233,7 @@ pub fn revoke_achievement(
 
     // Remove the achievement
     let bit_position = achievement_type as u8;
-    user_reputation.achievements &= !(1u64 << bit_position);
+    user_reputation.achievements &= !(1u32 << bit_position);
     user_reputation.last_updated = ReputationUtils::get_current_timestamp();
 
     msg!(

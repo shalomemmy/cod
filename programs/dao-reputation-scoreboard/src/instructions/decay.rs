@@ -1,7 +1,7 @@
 /// Calculate potential decay without applying it
 pub fn calculate_decay_preview(
     ctx: Context<CalculateDecayPreview>,
-    user: Pubkey,
+    _user: Pubkey,
 ) -> Result<DecayPreview> {
     let config = &ctx.accounts.config;
     let user_reputation = &ctx.accounts.user_reputation;
@@ -24,11 +24,11 @@ pub fn calculate_decay_preview(
     };
 
     let mut projected_points = [0u64; 4];
-    // Removed unused total_decay variable
+    let mut _total_decay = 0u64;
 
     for (i, &points) in user_reputation.category_points.iter().enumerate() {
         projected_points[i] = (points * decay_factor) / 10000;
-        // Removed total_decay calculation
+        _total_decay += points - projected_points[i];
     }
 
     // Calculate projected total score
@@ -43,7 +43,11 @@ pub fn calculate_decay_preview(
     }
     projected_total_score /= 10000;
 
-    // Removed unused projected_role_level variable
+
+    let _projected_role_level = ReputationUtils::calculate_role_level(
+        projected_total_score,
+        &config.role_thresholds,
+    );
 
     // Calculate decay amounts for preview
     let mut decay_amounts = [0u64; 4];

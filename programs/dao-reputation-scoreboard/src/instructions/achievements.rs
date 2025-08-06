@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
+// use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -145,45 +145,45 @@ pub fn get_achievement_progress(
     // FirstVote achievement
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::FirstVote,
-        earned: user_reputation.has_achievement(AchievementType::FirstVote),
-        current_progress: user_reputation.votes_cast.min(1),
-        required_progress: 1,
+        is_earned: user_reputation.has_achievement(AchievementType::FirstVote),
+        progress_value: user_reputation.votes_cast.min(1),
+        required_value: 1,
         progress_percentage: if user_reputation.votes_cast > 0 { 100 } else { 0 },
     });
 
     // WeeklyStreak achievement
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::WeeklyStreak,
-        earned: user_reputation.has_achievement(AchievementType::WeeklyStreak),
-        current_progress: user_reputation.current_streak.min(7) as u64,
-        required_progress: 7,
+        is_earned: user_reputation.has_achievement(AchievementType::WeeklyStreak),
+        progress_value: user_reputation.current_streak.min(7) as u64,
+        required_value: 7,
         progress_percentage: ((user_reputation.current_streak.min(7) as f64 / 7.0) * 100.0) as u8,
     });
 
     // MonthlyStreak achievement
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::MonthlyStreak,
-        earned: user_reputation.has_achievement(AchievementType::MonthlyStreak),
-        current_progress: user_reputation.current_streak.min(30) as u64,
-        required_progress: 30,
+        is_earned: user_reputation.has_achievement(AchievementType::MonthlyStreak),
+        progress_value: user_reputation.current_streak.min(30) as u64,
+        required_value: 30,
         progress_percentage: ((user_reputation.current_streak.min(30) as f64 / 30.0) * 100.0) as u8,
     });
 
     // TopContributor achievement
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::TopContributor,
-        earned: user_reputation.has_achievement(AchievementType::TopContributor),
-        current_progress: user_reputation.total_score.min(10000),
-        required_progress: 10000,
+        is_earned: user_reputation.has_achievement(AchievementType::TopContributor),
+        progress_value: user_reputation.total_score.min(10000),
+        required_value: 10000,
         progress_percentage: ((user_reputation.total_score.min(10000) as f64 / 10000.0) * 100.0) as u8,
     });
 
     // ConsistentVoter achievement
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::ConsistentVoter,
-        earned: user_reputation.has_achievement(AchievementType::ConsistentVoter),
-        current_progress: user_reputation.votes_cast.min(100),
-        required_progress: 100,
+        is_earned: user_reputation.has_achievement(AchievementType::ConsistentVoter),
+        progress_value: user_reputation.votes_cast.min(100),
+        required_value: 100,
         progress_percentage: ((user_reputation.votes_cast.min(100) as f64 / 100.0) * 100.0) as u8,
     });
 
@@ -191,9 +191,9 @@ pub fn get_achievement_progress(
     let max_category_points = *user_reputation.category_points.iter().max().unwrap_or(&0);
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::CategoryExpert,
-        earned: user_reputation.has_achievement(AchievementType::CategoryExpert),
-        current_progress: max_category_points.min(5000),
-        required_progress: 5000,
+        is_earned: user_reputation.has_achievement(AchievementType::CategoryExpert),
+        progress_value: max_category_points.min(5000),
+        required_value: 5000,
         progress_percentage: ((max_category_points.min(5000) as f64 / 5000.0) * 100.0) as u8,
     });
 
@@ -201,9 +201,9 @@ pub fn get_achievement_progress(
     let community_points = user_reputation.category_points[ReputationCategory::Community.to_index()];
     progress_list.push(AchievementProgress {
         achievement_type: AchievementType::CommunityBuilder,
-        earned: user_reputation.has_achievement(AchievementType::CommunityBuilder),
-        current_progress: community_points.min(3000),
-        required_progress: 3000,
+        is_earned: user_reputation.has_achievement(AchievementType::CommunityBuilder),
+        progress_value: community_points.min(3000),
+        required_value: 3000,
         progress_percentage: ((community_points.min(3000) as f64 / 3000.0) * 100.0) as u8,
     });
 

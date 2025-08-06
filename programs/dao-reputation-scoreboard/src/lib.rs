@@ -6,6 +6,12 @@ pub mod errors;
 pub mod utils;
 
 use instructions::*;
+use state::{
+    ReputationCategory, AchievementType, LeaderboardEntry, ReputationCertificate, 
+    ReputationConfigUpdate, BulkReputationUpdate, SeasonInfo, DecayPreview, 
+    DecayStatus, AchievementProgress, StreakInfo, StreakLeaderboardType, 
+    StreakLeaderboardEntry, ReputationConfigView, AchievementAward
+};
 
 // Replace this with the output from solana-keygen pubkey command
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");

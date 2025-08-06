@@ -19,7 +19,7 @@ pub use role_unlock::*;
 pub use season::*;
 pub use export::*;
 pub use config::*;
-
+pub use bulk_operations::*;
 pub use decay::*;
 pub use achievements::*;
 pub use streak::*;

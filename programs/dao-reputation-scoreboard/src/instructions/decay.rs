@@ -247,6 +247,11 @@ pub struct ApplyReputationDecay<'info> {
         bump
     )]
     pub user_reputation: Account<'info, UserReputation>,
+
+    #[account(
+        constraint = admin.key() == config.admin @ ReputationError::UnauthorizedAdmin
+    )]
+    pub admin: Signer<'info>,
 }
 
 #[derive(Accounts)]

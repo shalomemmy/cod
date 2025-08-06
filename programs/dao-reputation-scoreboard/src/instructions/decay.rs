@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -246,6 +245,11 @@ pub struct ApplyReputationDecay<'info> {
         bump
     )]
     pub user_reputation: Account<'info, UserReputation>,
+
+    #[account(
+        constraint = admin.key() == config.admin @ ReputationError::UnauthorizedAdmin
+    )]
+    pub admin: Signer<'info>,
 }
 
 #[derive(Accounts)]

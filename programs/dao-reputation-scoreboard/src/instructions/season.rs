@@ -36,12 +36,12 @@ pub fn start_new_season(
     season_data.start_time = current_time;
     season_data.end_time = current_time + config.season_duration as i64;
     season_data.is_active = true;
-    season_data.leaderboard = [LeaderboardEntry::default(); 10];
+    season_data.leaderboard = [LeaderboardEntry::default(); 5];
     season_data.total_participants = 0;
     season_data.rewards_distributed = false;
     season_data.total_votes_cast = 0;
     season_data.most_active_category = ReputationCategory::Governance;
-    season_data.reserved = [0; 64];
+    season_data.reserved = [0; 32];
 
     msg!(
         "New season started: {} (ID: {}, Duration: {} days)",
@@ -128,16 +128,7 @@ pub fn reset_seasonal_points(ctx: Context<ResetSeasonalPoints>) -> Result<()> {
     Ok(())
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct SeasonInfo {
-    pub season_id: u32,
-    pub season_name: String,
-    pub start_time: i64,
-    pub end_time: i64,
-    pub is_active: bool,
-    pub total_participants: u32,
-    pub days_remaining: u32,
-}
+// SeasonInfo is now defined in state.rs - removed duplicate
 
 #[derive(Accounts)]
 #[instruction(season_name: String, duration_days: u32, season_id: u32)]

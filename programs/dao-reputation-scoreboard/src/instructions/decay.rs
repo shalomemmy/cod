@@ -130,6 +130,19 @@ pub fn calculate_decay_preview(
         &config.role_thresholds,
     );
 
+    // Calculate decay amounts for preview
+    let mut decay_amounts = [0u64; 4];
+    let mut new_category_points = user_reputation.category_points;
+    
+    if config.decay_enabled && days_inactive >= 7 {
+        let decay_factor = 9500; // 5% decay = 95% remaining
+        for i in 0..4 {
+            let decay_amount = (user_reputation.category_points[i] * (10000 - decay_factor)) / 10000;
+            decay_amounts[i] = decay_amount;
+            new_category_points[i] = user_reputation.category_points[i] - decay_amount;
+        }
+    }
+
     let preview = DecayPreview {
         current_points: user_reputation.category_points,
         points_after_decay: new_category_points,
@@ -191,18 +204,10 @@ pub fn get_decay_status(
     for user in limited_users {
         let status = DecayStatus {
             user: *user,
-            days_since_activity: 7, // Mock data
-            decay_factor: if config.decay_enabled {
-                ReputationUtils::calculate_decay_factor(
-                    current_time - (7 * 86400), // Mock last activity
-                    current_time,
-                    config.decay_rate,
-                )
-            } else {
-                10000
-            },
-            points_at_risk: 500, // Mock data
-            decay_enabled: config.decay_enabled,
+            last_activity: current_time - (7 * 86400), // Mock: 7 days ago
+            days_inactive: 7,
+            decay_pending: config.decay_enabled,
+            next_decay_amount: [100, 150, 200, 50], // Mock decay amounts for each category
         };
         decay_statuses.push(status);
     }

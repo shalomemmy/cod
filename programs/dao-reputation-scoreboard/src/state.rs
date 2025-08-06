@@ -303,7 +303,7 @@ pub struct SeasonData {
     /// Season status
     pub is_active: bool,
     /// Top performers in this season (top 10)
-    pub leaderboard: [LeaderboardEntry; 10],
+    pub leaderboard: [LeaderboardEntry; 5],
     /// Total participants this season
     pub total_participants: u32,
     /// Season rewards pool (if any)
@@ -323,7 +323,7 @@ impl SeasonData {
         8 + // start_time
         8 + // end_time
         1 + // is_active
-        (LeaderboardEntry::LEN * 10) + // leaderboard
+        (LeaderboardEntry::LEN * 5) + // leaderboard
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast

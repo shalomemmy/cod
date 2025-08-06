@@ -176,11 +176,7 @@ pub fn bulk_reset_seasonal_data(
     Ok(())
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct AchievementAward {
-    pub user: Pubkey,
-    pub achievement_type: AchievementType,
-}
+// AchievementAward is now defined in state.rs - removed duplicate
 
 #[derive(Accounts)]
 #[instruction(updates: Vec<BulkReputationUpdate>)]

@@ -218,33 +218,7 @@ pub fn bulk_update_streaks(
     Ok(())
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Debug)]
-pub enum StreakLeaderboardType {
-    CurrentStreak,
-    LongestStreak,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct StreakInfo {
-    pub user: Pubkey,
-    pub current_streak: u32,
-    pub longest_streak: u32,
-    pub days_since_last_activity: u32,
-    pub streak_at_risk: bool,
-    pub streak_broken: bool,
-    pub current_streak_bonus: u64,
-    pub next_day_bonus: u64,
-    pub last_activity: i64,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct StreakLeaderboardEntry {
-    pub user: Pubkey,
-    pub current_streak: u32,
-    pub longest_streak: u32,
-    pub streak_bonus: u64,
-    pub rank: u32,
-}
+// StreakLeaderboardType, StreakInfo, and StreakLeaderboardEntry are now defined in state.rs - removed duplicates
 
 #[derive(Accounts)]
 #[instruction(user: Pubkey)]

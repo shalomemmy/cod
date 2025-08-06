@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
-use crate::utils::*;
+// Removed unused import
 
 /// Bulk admin operation to update multiple users
 pub fn bulk_update_reputation(
@@ -24,7 +24,7 @@ pub fn bulk_update_reputation(
     );
 
     // Validate all updates before processing
-    for update in &updates {
+    for _update in &updates {
         // Skip validation for fixed-size byte array
     }
 

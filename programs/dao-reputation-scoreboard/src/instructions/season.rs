@@ -40,7 +40,7 @@ pub fn start_new_season(
     season_data.rewards_distributed = false;
     season_data.total_votes_cast = 0;
     season_data.most_active_category = ReputationCategory::Governance;
-    season_data.reserved = [0; 2];
+    season_data.reserved = [0; 1];
 
     msg!(
         "New season started: {} (ID: {}, Duration: {} days)",

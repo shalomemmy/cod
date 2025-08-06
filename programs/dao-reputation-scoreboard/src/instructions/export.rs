@@ -85,11 +85,13 @@ pub fn export_leaderboard(
     let mock_leaderboard = vec![
         LeaderboardEntry {
             user: Pubkey::default(),
+            user: Pubkey::default(),
             score: 10000,
             category: ReputationCategory::Governance,
             rank: 1,
         },
         LeaderboardEntry {
+            user: Pubkey::default(),
             user: Pubkey::default(),
             score: 8500,
             category: ReputationCategory::Development,

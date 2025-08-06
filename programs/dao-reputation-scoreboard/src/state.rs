@@ -15,7 +15,7 @@ pub struct ReputationConfig {
     pub min_reputation_to_vote: u64,
     /// Category weights for scoring [governance, development, community, treasury]
     pub category_weights: [u16; 4],
-    /// Role unlock thresholds [member, contributor, senior, expert, leader] - OPTIMIZED
+    /// Role unlock thresholds [member, contributor, senior] - ULTRA OPTIMIZED
     pub role_thresholds: [u64; 3], // Reduced from 5 to 3
     /// Current active season ID
     pub current_season: u32,
@@ -33,8 +33,8 @@ pub struct ReputationConfig {
     pub initialized_at: i64,
     /// Last config update timestamp
     pub last_updated: i64,
-    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
-    pub reserved: [u8; 2], // Reduced from 4 to 2
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
+    pub reserved: [u8; 1], // Reduced from 2 to 1
 }
 
 impl ReputationConfig {
@@ -54,7 +54,7 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
-        2; // reserved (ULTRA OPTIMIZED)
+        1; // reserved (MAXIMUM OPTIMIZED)
 }
 
 /// Individual user reputation data
@@ -88,8 +88,8 @@ pub struct UserReputation {
     pub votes_cast: u64,
     /// Seasonal points [governance, development, community, treasury]
     pub seasonal_points: [u64; 4],
-    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
-    pub reserved: [u8; 2], // Reduced from 4 to 2
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
+    pub reserved: [u8; 1], // Reduced from 2 to 1
 }
 
 impl UserReputation {
@@ -108,7 +108,7 @@ impl UserReputation {
         4 + // best_season_rank
         8 + // votes_cast
         (8 * 4) + // seasonal_points
-        2; // reserved (ULTRA OPTIMIZED)
+        1; // reserved (MAXIMUM OPTIMIZED)
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, category_weights: &[u16; 4]) -> u64 {
@@ -211,8 +211,8 @@ pub struct VotingRecord {
     pub vote_history: [VoteHistoryEntry; 1],
     /// Current history index (circular buffer)
     pub history_index: u8,
-    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
-    pub reserved: [u8; 2], // Reduced from 4 to 2
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
+    pub reserved: [u8; 1], // Reduced from 2 to 1
 }
 
 impl VotingRecord {
@@ -225,7 +225,7 @@ impl VotingRecord {
         4 + // total_votes_on_target
         (VoteHistoryEntry::LEN * 1) + // vote_history (MAXIMUM OPTIMIZED)
         1 + // history_index
-        2; // reserved (ULTRA OPTIMIZED)
+        1; // reserved (MAXIMUM OPTIMIZED)
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -268,13 +268,17 @@ impl LeaderboardEntry {
         1; // category
 }
 
-/// Season competition data
+/// Season competition data - WITH REQUIRED FIELDS
 #[account]
 pub struct SeasonData {
     /// Season identifier
     pub season_id: u32,
     /// Whether season is currently active
     pub is_active: bool,
+    /// Season start timestamp
+    pub start_time: i64,
+    /// Season end timestamp
+    pub end_time: i64,
     /// Top performers - MAXIMUM OPTIMIZED to 1 entry
     pub leaderboard: [LeaderboardEntry; 1],
     /// Total participants this season
@@ -285,20 +289,22 @@ pub struct SeasonData {
     pub total_votes_cast: u64,
     /// Most active category this season
     pub most_active_category: ReputationCategory,
-    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
-    pub reserved: [u8; 2], // Reduced from 4 to 2
+    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
+    pub reserved: [u8; 1], // Reduced from 2 to 1
 }
 
 impl SeasonData {
     pub const LEN: usize = 8 + // discriminator
         4 + // season_id
         1 + // is_active
+        8 + // start_time
+        8 + // end_time
         (LeaderboardEntry::LEN * 1) + // leaderboard (MAXIMUM OPTIMIZED)
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
-        2; // reserved (ULTRA OPTIMIZED)
+        1; // reserved (MAXIMUM OPTIMIZED)
 }
 
 /// Additional types for complex operations

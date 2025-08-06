@@ -16,8 +16,8 @@ impl ReputationUtils {
     }
 
     /// Validate that role thresholds are in ascending order
-    pub fn validate_role_thresholds(thresholds: &[u64; 5]) -> Result<()> {
-        for i in 1..thresholds.len() {
+    pub fn validate_role_thresholds(thresholds: &[u64; 3]) -> Result<()> {
+        for i in 1..3 {
             if thresholds[i] <= thresholds[i - 1] {
                 return err!(ReputationError::InvalidRoleThresholds);
             }
@@ -26,7 +26,7 @@ impl ReputationUtils {
     }
 
     /// Calculate user's role level based on total score and thresholds
-    pub fn calculate_role_level(total_score: u64, thresholds: &[u64; 5]) -> u8 {
+    pub fn calculate_role_level(total_score: u64, thresholds: &[u64; 3]) -> u8 {
         for (level, &threshold) in thresholds.iter().enumerate().rev() {
             if total_score >= threshold {
                 return (level + 1) as u8;

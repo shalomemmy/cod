@@ -102,6 +102,8 @@ pub fn get_user_streak_info(
         current_streak_bonus: ReputationUtils::calculate_streak_bonus(user_reputation.current_streak),
         next_day_bonus,
         last_activity: user_reputation.last_activity,
+        streak_bonus: ReputationUtils::calculate_streak_bonus(user_reputation.current_streak),
+        is_active: user_reputation.current_streak > 0,
     };
 
     Ok(streak_info)

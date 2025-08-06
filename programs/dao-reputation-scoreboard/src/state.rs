@@ -69,7 +69,7 @@ pub struct ReputationConfig {
     /// Last config update timestamp
     pub last_updated: i64,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 32],
+    pub reserved: [u8; 16],
 }
 
 impl ReputationConfig {
@@ -89,7 +89,7 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
-        32; // reserved
+        16; // reserved
 }
 
 /// Individual user reputation data
@@ -124,7 +124,7 @@ pub struct UserReputation {
     /// Total votes cast by this user
     pub votes_cast: u64,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 32],
+    pub reserved: [u8; 16],
 }
 
 impl UserReputation {
@@ -143,7 +143,7 @@ impl UserReputation {
         (8 * 4) + // seasonal_points
         4 + // best_season_rank
         8 + // votes_cast
-        32; // reserved
+        16; // reserved
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, weights: &[u16; 4]) {
@@ -220,11 +220,11 @@ pub struct VotingRecord {
     /// Total votes cast on this target
     pub total_votes_on_target: u32,
     /// Vote history (last 10 votes with timestamps)
-    pub vote_history: [VoteHistoryEntry; 5],
+    pub vote_history: [VoteHistoryEntry; 3],
     /// Current history index (circular buffer)
     pub history_index: u8,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 32],
+    pub reserved: [u8; 16],
 }
 
 impl VotingRecord {
@@ -235,9 +235,9 @@ impl VotingRecord {
         1 + // daily_votes
         8 + // last_daily_reset
         4 + // total_votes_on_target
-        (VoteHistoryEntry::LEN * 5) + // vote_history
+        (VoteHistoryEntry::LEN * 3) + // vote_history
         1 + // history_index
-        32; // reserved
+        16; // reserved
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -261,7 +261,7 @@ impl VotingRecord {
         let entry = VoteHistoryEntry::new(category, is_upvote, timestamp);
         
         self.vote_history[self.history_index as usize] = entry;
-        self.history_index = (self.history_index + 1) % 5;
+        self.history_index = (self.history_index + 1) % 3;
     }
 }
 
@@ -303,7 +303,7 @@ pub struct SeasonData {
     /// Season status
     pub is_active: bool,
     /// Top performers in this season (top 10)
-    pub leaderboard: [LeaderboardEntry; 5],
+    pub leaderboard: [LeaderboardEntry; 3],
     /// Total participants this season
     pub total_participants: u32,
     /// Season rewards pool (if any)
@@ -313,7 +313,7 @@ pub struct SeasonData {
     /// Most active category this season
     pub most_active_category: ReputationCategory,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 32],
+    pub reserved: [u8; 16],
 }
 
 impl SeasonData {
@@ -323,12 +323,12 @@ impl SeasonData {
         8 + // start_time
         8 + // end_time
         1 + // is_active
-        (LeaderboardEntry::LEN * 5) + // leaderboard
+        (LeaderboardEntry::LEN * 3) + // leaderboard
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
-        32; // reserved
+        16; // reserved
 }
 
 /// Leaderboard entry structure

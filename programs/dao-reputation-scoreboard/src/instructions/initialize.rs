@@ -11,7 +11,7 @@ pub fn initialize_reputation_system(
     daily_vote_limit: u8,
     min_reputation_to_vote: u64,
     category_weights: [u16; 4],
-    role_thresholds: [u64; 5],
+    role_thresholds: [u64; 3],
 ) -> Result<()> {
     let config = &mut ctx.accounts.config;
     let current_time = ReputationUtils::get_current_timestamp();

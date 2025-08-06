@@ -24,7 +24,9 @@ pub fn export_reputation(ctx: Context<ExportReputation>) -> Result<ReputationCer
         category_scores: user_reputation.category_points,
         achievements: user_reputation.achievements,
         role_level: user_reputation.role_level,
+        issued_at: current_time,
         generated_at: current_time,
+        season_id: 1,
         program_id,
         signature_hash,
     };
@@ -83,14 +85,14 @@ pub fn export_leaderboard(
     let mock_leaderboard = vec![
         LeaderboardEntry {
             user: Pubkey::default(),
-            total_score: 10000,
-            category_scores: [3000, 2500, 2500, 2000],
+            score: 10000,
+            category: ReputationCategory::Governance,
             rank: 1,
         },
         LeaderboardEntry {
             user: Pubkey::default(),
-            total_score: 8500,
-            category_scores: [2000, 3000, 2000, 1500],
+            score: 8500,
+            category: ReputationCategory::Development,
             rank: 2,
         },
     ];

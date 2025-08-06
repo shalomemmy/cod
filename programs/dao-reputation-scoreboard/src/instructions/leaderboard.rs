@@ -24,14 +24,14 @@ pub fn get_leaderboard(
     let mock_entries = vec![
         LeaderboardEntry {
             user: Pubkey::default(),
-            total_score: 5000,
-            category_scores: [1500, 1200, 1300, 1000],
+            score: 5000,
+            category: ReputationCategory::Governance,
             rank: 1,
         },
         LeaderboardEntry {
             user: Pubkey::default(),
-            total_score: 4500,
-            category_scores: [1200, 1500, 1000, 800],
+            score: 4500,
+            category: ReputationCategory::Development,
             rank: 2,
         },
     ];

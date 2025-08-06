@@ -159,23 +159,29 @@ pub fn get_streak_leaderboard(
     let mock_entries = vec![
         StreakLeaderboardEntry {
             user: Pubkey::default(),
+            streak_value: 45,
+            is_active: true,
             current_streak: 45,
             longest_streak: 67,
-            streak_bonus: ReputationUtils::calculate_streak_bonus(45),
+            streak_bonus: (ReputationUtils::calculate_streak_bonus(45) as u32),
             rank: 1,
         },
         StreakLeaderboardEntry {
             user: Pubkey::default(),
+            streak_value: 32,
+            is_active: true,
             current_streak: 32,
             longest_streak: 89,
-            streak_bonus: ReputationUtils::calculate_streak_bonus(32),
+            streak_bonus: (ReputationUtils::calculate_streak_bonus(32) as u32),
             rank: 2,
         },
         StreakLeaderboardEntry {
             user: Pubkey::default(),
+            streak_value: 28,
+            is_active: false,
             current_streak: 28,
             longest_streak: 34,
-            streak_bonus: ReputationUtils::calculate_streak_bonus(28),
+            streak_bonus: (ReputationUtils::calculate_streak_bonus(28) as u32),
             rank: 3,
         },
     ];

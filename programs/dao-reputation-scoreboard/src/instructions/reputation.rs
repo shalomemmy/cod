@@ -89,7 +89,11 @@ pub fn initialize_user_reputation(ctx: Context<InitializeUserReputation>) -> Res
     user_reputation.seasonal_points = [0; 4];
     user_reputation.best_season_rank = 0;
     user_reputation.votes_cast = 0;
+<<<<<<< HEAD
     user_reputation.reserved = [0; 16];
+=======
+    user_reputation.reserved = [0; 4];
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 
     // Increment total users count
     config.total_users += 1;

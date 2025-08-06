@@ -70,7 +70,11 @@ pub struct ReputationConfig {
     /// Last config update timestamp
     pub last_updated: i64,
     /// Reserved space for future upgrades
+<<<<<<< HEAD
     pub reserved: [u8; 16],
+=======
+    pub reserved: [u8; 4],
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 impl ReputationConfig {
@@ -90,7 +94,11 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
+<<<<<<< HEAD
         16; // reserved
+=======
+        4; // reserved
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 /// Individual user reputation data
@@ -125,7 +133,11 @@ pub struct UserReputation {
     /// Total votes cast by this user
     pub votes_cast: u64,
     /// Reserved space for future upgrades
+<<<<<<< HEAD
     pub reserved: [u8; 16],
+=======
+    pub reserved: [u8; 4],
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 impl UserReputation {
@@ -144,7 +156,11 @@ impl UserReputation {
         (8 * 4) + // seasonal_points
         4 + // best_season_rank
         8 + // votes_cast
+<<<<<<< HEAD
         16; // reserved
+=======
+        4; // reserved
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, weights: &[u16; 4]) {
@@ -221,11 +237,19 @@ pub struct VotingRecord {
     /// Total votes cast on this target
     pub total_votes_on_target: u32,
     /// Vote history (last 10 votes with timestamps)
+<<<<<<< HEAD
     pub vote_history: [VoteHistoryEntry; 3],
     /// Current history index (circular buffer)
     pub history_index: u8,
     /// Reserved space for future upgrades
     pub reserved: [u8; 16],
+=======
+    pub vote_history: [VoteHistoryEntry; 1],
+    /// Current history index (circular buffer)
+    pub history_index: u8,
+    /// Reserved space for future upgrades
+    pub reserved: [u8; 4],
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 impl VotingRecord {
@@ -236,9 +260,15 @@ impl VotingRecord {
         1 + // daily_votes
         8 + // last_daily_reset
         4 + // total_votes_on_target
+<<<<<<< HEAD
         (VoteHistoryEntry::LEN * 3) + // vote_history
         1 + // history_index
         16; // reserved
+=======
+        (VoteHistoryEntry::LEN * 1) + // vote_history
+        1 + // history_index
+        4; // reserved
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -262,7 +292,11 @@ impl VotingRecord {
         let entry = VoteHistoryEntry::new(category, is_upvote, timestamp);
         
         self.vote_history[self.history_index as usize] = entry;
+<<<<<<< HEAD
         self.history_index = (self.history_index + 1) % 3;
+=======
+        self.history_index = 0; // Only 1 slot, always use index 0
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
     }
 }
 
@@ -304,7 +338,11 @@ pub struct SeasonData {
     /// Season status
     pub is_active: bool,
     /// Top performers in this season (top 10)
+<<<<<<< HEAD
     pub leaderboard: [LeaderboardEntry; 3],
+=======
+    pub leaderboard: [LeaderboardEntry; 1],
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
     /// Total participants this season
     pub total_participants: u32,
     /// Season rewards pool (if any)
@@ -314,22 +352,38 @@ pub struct SeasonData {
     /// Most active category this season
     pub most_active_category: ReputationCategory,
     /// Reserved space for future upgrades
+<<<<<<< HEAD
     pub reserved: [u8; 16],
+=======
+    pub reserved: [u8; 4],
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 impl SeasonData {
     pub const LEN: usize = 8 + // discriminator
         4 + // season_id
+<<<<<<< HEAD
         32 + // season_name (max length)
         8 + // start_time
         8 + // end_time
         1 + // is_active
         (LeaderboardEntry::LEN * 3) + // leaderboard
+=======
+        12 + // season_name (max length)
+        8 + // start_time
+        8 + // end_time
+        1 + // is_active
+        (LeaderboardEntry::LEN * 1) + // leaderboard
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
+<<<<<<< HEAD
         16; // reserved
+=======
+        4; // reserved
+>>>>>>> 6655cf1 (Resolve merge conflicts + extreme stack optimizations)
 }
 
 /// Leaderboard entry structure

@@ -291,7 +291,6 @@ pub struct ResetDecayTimer<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(users: Vec<Pubkey>)]
 pub struct GetDecayStatus<'info> {
     #[account(
         seeds = [b"reputation_config"],

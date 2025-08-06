@@ -101,9 +101,9 @@ pub fn cast_vote(
         voting_record.daily_votes = 0;
         voting_record.last_daily_reset = current_time;
         voting_record.total_votes_on_target = 0;
-        voting_record.vote_history = [VoteHistoryEntry::default(); 2];
+        voting_record.vote_history = [VoteHistoryEntry::default(); 3];
         voting_record.history_index = 0;
-        voting_record.reserved = [0; 8];
+        voting_record.reserved = [0; 16];
     }
 
     // Update voting record

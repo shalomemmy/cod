@@ -14,6 +14,7 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
 # Anchor internal features to suppress warnings
 custom-heap = []
 custom-panic = []
@@ -22,3 +23,5 @@ anchor-debug = []
 [dependencies]
 anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
 anchor-spl = "0.31.1"
+# Add explicit dependency with exact version to resolve conflict
+serde_spanned = "=0.6.8"

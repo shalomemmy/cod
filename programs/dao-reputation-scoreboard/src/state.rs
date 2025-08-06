@@ -16,7 +16,7 @@ pub struct ReputationConfig {
     /// Category weights for scoring [governance, development, community, treasury]
     pub category_weights: [u16; 4],
     /// Role unlock thresholds [member, contributor, senior] - ULTRA OPTIMIZED
-    pub role_thresholds: [u64; 3], // Reduced from 5 to 3
+    pub role_thresholds: [u64; 5], // Reduced from 5 to 3
     /// Current active season ID
     pub current_season: u32,
     /// Current season start timestamp
@@ -321,7 +321,7 @@ pub struct ReputationConfigUpdate {
     pub daily_vote_limit: Option<u8>,
     pub min_reputation_to_vote: Option<u64>,
     pub category_weights: Option<[u16; 4]>,
-    pub role_thresholds: Option<[u64; 3]>, // OPTIMIZED
+    pub role_thresholds: Option<[u64; 5]>, // OPTIMIZED
     pub decay_rate: Option<u16>,
     pub decay_enabled: Option<bool>,
 }
@@ -423,7 +423,7 @@ pub struct ReputationConfigView {
     pub daily_vote_limit: u8,
     pub min_reputation_to_vote: u64,
     pub category_weights: [u16; 4],
-    pub role_thresholds: [u64; 3], // OPTIMIZED
+    pub role_thresholds: [u64; 5], // OPTIMIZED
     pub decay_enabled: bool,
     pub current_season: u32,
     pub total_users: u64,

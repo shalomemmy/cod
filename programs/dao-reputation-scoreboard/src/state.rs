@@ -124,7 +124,7 @@ pub struct UserReputation {
     /// Total votes cast by this user
     pub votes_cast: u64,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 64],
+    pub reserved: [u8; 32],
 }
 
 impl UserReputation {
@@ -143,7 +143,7 @@ impl UserReputation {
         (8 * 4) + // seasonal_points
         4 + // best_season_rank
         8 + // votes_cast
-        64; // reserved
+        32; // reserved
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, weights: &[u16; 4]) {
@@ -220,7 +220,7 @@ pub struct VotingRecord {
     /// Total votes cast on this target
     pub total_votes_on_target: u32,
     /// Vote history (last 10 votes with timestamps)
-    pub vote_history: [VoteHistoryEntry; 10],
+    pub vote_history: [VoteHistoryEntry; 5],
     /// Current history index (circular buffer)
     pub history_index: u8,
     /// Reserved space for future upgrades
@@ -235,7 +235,7 @@ impl VotingRecord {
         1 + // daily_votes
         8 + // last_daily_reset
         4 + // total_votes_on_target
-        (VoteHistoryEntry::LEN * 10) + // vote_history
+        (VoteHistoryEntry::LEN * 5) + // vote_history
         1 + // history_index
         32; // reserved
 
@@ -261,7 +261,7 @@ impl VotingRecord {
         let entry = VoteHistoryEntry::new(category, is_upvote, timestamp);
         
         self.vote_history[self.history_index as usize] = entry;
-        self.history_index = (self.history_index + 1) % 10;
+        self.history_index = (self.history_index + 1) % 5;
     }
 }
 
@@ -313,7 +313,7 @@ pub struct SeasonData {
     /// Most active category this season
     pub most_active_category: ReputationCategory,
     /// Reserved space for future upgrades
-    pub reserved: [u8; 64],
+    pub reserved: [u8; 32],
 }
 
 impl SeasonData {
@@ -328,7 +328,7 @@ impl SeasonData {
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
-        64; // reserved
+        32; // reserved
 }
 
 /// Leaderboard entry structure

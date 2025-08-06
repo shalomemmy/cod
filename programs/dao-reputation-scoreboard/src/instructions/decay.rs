@@ -1,6 +1,5 @@
 
 use anchor_lang::prelude::*;
-use anchor_lang::system_program::{System};
 use crate::state::*;
 use crate::errors::*;
 use crate::utils::*;
@@ -155,4 +154,153 @@ pub fn calculate_decay_preview(
     };
 
     Ok(preview)
+<<<<<<< HEAD
+=======
+}
+
+/// Reset decay for a user (admin function)
+pub fn reset_decay_timer(
+    ctx: Context<ResetDecayTimer>,
+    user: Pubkey,
+) -> Result<()> {
+    let config = &ctx.accounts.config;
+    let user_reputation = &mut ctx.accounts.user_reputation;
+    let current_time = ReputationUtils::get_current_timestamp();
+
+    // Validate admin authority
+    require!(
+        ctx.accounts.admin.key() == config.admin,
+        ReputationError::UnauthorizedAdmin
+    );
+
+    // Reset last activity to current time
+    user_reputation.last_activity = current_time;
+    user_reputation.last_updated = current_time;
+
+    msg!(
+        "Decay timer reset for user {} by admin {}",
+        user,
+        ctx.accounts.admin.key()
+    );
+
+    Ok(())
+}
+
+/// Get decay information for multiple users
+pub fn get_decay_status(
+    ctx: Context<GetDecayStatus>,
+    users: Vec<Pubkey>,
+) -> Result<Vec<DecayStatus>> {
+    let config = &ctx.accounts.config;
+    let current_time = ReputationUtils::get_current_timestamp();
+
+    // Limit the number of users to process to avoid stack overflow
+    let limited_users = if users.len() > 10 {
+        &users[0..10]
+    } else {
+        &users[..]
+    };
+
+    let mut decay_statuses = Vec::with_capacity(limited_users.len());
+
+    // In a real implementation, you would load each user's reputation account
+    // For this example, we'll return mock data
+    for user in limited_users {
+        let status = DecayStatus {
+            user: *user,
+            last_activity: current_time - (7 * 86400), // Mock: 7 days ago
+            days_inactive: 7,
+            decay_pending: config.decay_enabled,
+            next_decay_amount: [100, 150, 200, 50], // Mock decay amounts for each category
+        };
+        decay_statuses.push(status);
+    }
+
+    Ok(decay_statuses)
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+// pub struct DecayPreview {
+//     pub user: Pubkey,
+//     pub current_total_score: u64,
+//     pub projected_total_score: u64,
+//     pub current_role_level: u8,
+//     pub projected_role_level: u8,
+//     pub days_inactive: u32,
+//     pub total_points_to_decay: u64,
+//     pub decay_factor: u64,
+//     pub decay_enabled: bool,
+// }
+
+// DecayStatus is now defined in state.rs - removed duplicate
+
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct ApplyReputationDecay<'info> {
+    #[account(
+        seeds = [b"reputation_config"],
+        bump
+    )]
+    pub config: Account<'info, ReputationConfig>,
+
+    #[account(
+        mut,
+        seeds = [b"user_reputation", user.as_ref()],
+        bump
+    )]
+    pub user_reputation: Account<'info, UserReputation>,
+
+    #[account(
+        constraint = admin.key() == config.admin @ ReputationError::UnauthorizedAdmin
+    )]
+    pub admin: Signer<'info>,
+}
+
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct CalculateDecayPreview<'info> {
+    #[account(
+        seeds = [b"reputation_config"],
+        bump
+    )]
+    pub config: Account<'info, ReputationConfig>,
+
+    #[account(
+        seeds = [b"user_reputation", user.as_ref()],
+        bump
+    )]
+    pub user_reputation: Account<'info, UserReputation>,
+}
+
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct ResetDecayTimer<'info> {
+    #[account(
+        seeds = [b"reputation_config"],
+        bump
+    )]
+    pub config: Account<'info, ReputationConfig>,
+
+    #[account(
+        mut,
+        seeds = [b"user_reputation", user.as_ref()],
+        bump
+    )]
+    pub user_reputation: Account<'info, UserReputation>,
+
+    #[account(
+        constraint = admin.key() == config.admin @ ReputationError::UnauthorizedAdmin
+    )]
+    pub admin: Signer<'info>,
+}
+
+#[derive(Accounts)]
+#[instruction(users: Vec<Pubkey>)]
+pub struct GetDecayStatus<'info> {
+    #[account(
+        seeds = [b"reputation_config"],
+        bump
+    )]
+    pub config: Account<'info, ReputationConfig>,
+>>>>>>> b04e86827bbb2587327daaf64456a655e4f6abb4
 }

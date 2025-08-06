@@ -76,7 +76,7 @@ A comprehensive reputation tracking system for Solana DAOs with multi-dimensiona
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/shalomemmy/cod.git
 cd dao-reputation-scoreboard
 ```
 

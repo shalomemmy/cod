@@ -25,7 +25,7 @@ pub fn bulk_update_reputation(
 
     // Validate all updates before processing
     for update in &updates {
-        ReputationUtils::validate_string_length(&update.reason, 200)?;
+        // Skip validation for fixed-size byte array
     }
 
     msg!(

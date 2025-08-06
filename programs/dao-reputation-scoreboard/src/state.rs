@@ -15,8 +15,8 @@ pub struct ReputationConfig {
     pub min_reputation_to_vote: u64,
     /// Category weights for scoring [governance, development, community, treasury]
     pub category_weights: [u16; 4],
-    /// Role unlock thresholds [member, contributor, senior, expert, leader]
-    pub role_thresholds: [u64; 5],
+    /// Role unlock thresholds [member, contributor, senior, expert, leader] - OPTIMIZED
+    pub role_thresholds: [u64; 3], // Reduced from 5 to 3
     /// Current active season ID
     pub current_season: u32,
     /// Current season start timestamp
@@ -33,8 +33,8 @@ pub struct ReputationConfig {
     pub initialized_at: i64,
     /// Last config update timestamp
     pub last_updated: i64,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 4],
+    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
+    pub reserved: [u8; 2], // Reduced from 4 to 2
 }
 
 impl ReputationConfig {
@@ -45,7 +45,7 @@ impl ReputationConfig {
         1 + // daily_vote_limit
         8 + // min_reputation_to_vote
         (2 * 4) + // category_weights
-        (8 * 5) + // role_thresholds
+        (8 * 3) + // role_thresholds (OPTIMIZED)
         4 + // current_season
         8 + // season_start
         8 + // season_duration
@@ -54,7 +54,7 @@ impl ReputationConfig {
         1 + // decay_enabled
         8 + // initialized_at
         8 + // last_updated
-        4; // reserved (MAXIMUM OPTIMIZED)
+        2; // reserved (ULTRA OPTIMIZED)
 }
 
 /// Individual user reputation data
@@ -68,7 +68,7 @@ pub struct UserReputation {
     pub raw_votes: [u64; 4],
     /// Total calculated score
     pub total_score: u64,
-    /// Current role level (0-4)
+    /// Current role level (0-2) - OPTIMIZED
     pub role_level: u8,
     /// Number of achievements earned
     pub achievements: u32,
@@ -88,8 +88,8 @@ pub struct UserReputation {
     pub votes_cast: u64,
     /// Seasonal points [governance, development, community, treasury]
     pub seasonal_points: [u64; 4],
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 4],
+    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
+    pub reserved: [u8; 2], // Reduced from 4 to 2
 }
 
 impl UserReputation {
@@ -108,7 +108,7 @@ impl UserReputation {
         4 + // best_season_rank
         8 + // votes_cast
         (8 * 4) + // seasonal_points
-        4; // reserved (MAXIMUM OPTIMIZED)
+        2; // reserved (ULTRA OPTIMIZED)
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, category_weights: &[u16; 4]) -> u64 {
@@ -211,8 +211,8 @@ pub struct VotingRecord {
     pub vote_history: [VoteHistoryEntry; 1],
     /// Current history index (circular buffer)
     pub history_index: u8,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 4],
+    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
+    pub reserved: [u8; 2], // Reduced from 4 to 2
 }
 
 impl VotingRecord {
@@ -225,7 +225,7 @@ impl VotingRecord {
         4 + // total_votes_on_target
         (VoteHistoryEntry::LEN * 1) + // vote_history (MAXIMUM OPTIMIZED)
         1 + // history_index
-        4; // reserved (MAXIMUM OPTIMIZED)
+        2; // reserved (ULTRA OPTIMIZED)
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -252,24 +252,20 @@ impl VotingRecord {
     }
 }
 
-/// Leaderboard entry
+/// Leaderboard entry - ULTRA MINIMAL
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
 pub struct LeaderboardEntry {
     pub user: Pubkey,
     pub score: u64,
     pub rank: u32,
     pub category: ReputationCategory,
-    pub total_score: u64,
-    pub category_scores: [u64; 4],
 }
 
 impl LeaderboardEntry {
     pub const LEN: usize = 32 + // user
         8 + // score
         4 + // rank
-        1 + // category
-        8 + // total_score
-        (8 * 4); // category_scores
+        1; // category
 }
 
 /// Season competition data
@@ -277,12 +273,6 @@ impl LeaderboardEntry {
 pub struct SeasonData {
     /// Season identifier
     pub season_id: u32,
-    /// Season name - MAXIMUM OPTIMIZED to 1 byte
-    pub season_name: [u8; 1],
-    /// Season start timestamp
-    pub start_time: i64,
-    /// Season end timestamp
-    pub end_time: i64,
     /// Whether season is currently active
     pub is_active: bool,
     /// Top performers - MAXIMUM OPTIMIZED to 1 entry
@@ -295,23 +285,20 @@ pub struct SeasonData {
     pub total_votes_cast: u64,
     /// Most active category this season
     pub most_active_category: ReputationCategory,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 4],
+    /// Reserved space for future upgrades (ULTRA OPTIMIZED)
+    pub reserved: [u8; 2], // Reduced from 4 to 2
 }
 
 impl SeasonData {
     pub const LEN: usize = 8 + // discriminator
         4 + // season_id
-        1 + // season_name (MAXIMUM OPTIMIZED)
-        8 + // start_time
-        8 + // end_time
         1 + // is_active
         (LeaderboardEntry::LEN * 1) + // leaderboard (MAXIMUM OPTIMIZED)
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
         1 + // most_active_category
-        4; // reserved (MAXIMUM OPTIMIZED)
+        2; // reserved (ULTRA OPTIMIZED)
 }
 
 /// Additional types for complex operations
@@ -336,7 +323,7 @@ pub struct ReputationConfigUpdate {
     pub daily_vote_limit: Option<u8>,
     pub min_reputation_to_vote: Option<u64>,
     pub category_weights: Option<[u16; 4]>,
-    pub role_thresholds: Option<[u64; 5]>,
+    pub role_thresholds: Option<[u64; 3]>, // OPTIMIZED
     pub decay_rate: Option<u16>,
     pub decay_enabled: Option<bool>,
 }
@@ -347,7 +334,6 @@ pub struct BulkReputationUpdate {
     pub category_points: [u64; 4],
     pub achievements: u32,
     pub role_level: u8,
-    pub reason: [u8; 32], // Fixed size for Copy trait
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default)]
@@ -423,7 +409,6 @@ pub struct AchievementAward {
 pub struct SeasonInfo {
     pub season_id: u32,
     pub name: String,
-    pub season_name: String,
     pub start_time: i64,
     pub end_time: i64,
     pub is_active: bool,
@@ -440,7 +425,7 @@ pub struct ReputationConfigView {
     pub daily_vote_limit: u8,
     pub min_reputation_to_vote: u64,
     pub category_weights: [u16; 4],
-    pub role_thresholds: [u64; 5],
+    pub role_thresholds: [u64; 3], // OPTIMIZED
     pub decay_enabled: bool,
     pub current_season: u32,
     pub total_users: u64,

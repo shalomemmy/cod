@@ -32,13 +32,6 @@ pub fn start_new_season(
 
     // Initialize season data
     season_data.season_id = season_id;
-    // Truncate season name to fit 1 byte max
-    let name_bytes = season_name.as_bytes();
-    let mut name_array = [0u8; 1];
-    if !name_bytes.is_empty() {
-        name_array[0] = name_bytes[0];
-    }
-    season_data.season_name = name_array;
     season_data.start_time = current_time;
     season_data.end_time = current_time + config.season_duration as i64;
     season_data.is_active = true;
@@ -47,7 +40,7 @@ pub fn start_new_season(
     season_data.rewards_distributed = false;
     season_data.total_votes_cast = 0;
     season_data.most_active_category = ReputationCategory::Governance;
-    season_data.reserved = [0; 4];
+    season_data.reserved = [0; 2];
 
     msg!(
         "New season started: {} (ID: {}, Duration: {} days)",
@@ -93,13 +86,14 @@ pub fn get_season_info(ctx: Context<GetSeasonInfo>, _season_id: u32) -> Result<S
 
     let season_info = SeasonInfo {
         season_id: season_data.season_id,
-        season_name: String::from_utf8_lossy(&season_data.season_name).to_string(),
+        name: format!("Season {}", season_data.season_id),
         start_time: season_data.start_time,
         end_time: season_data.end_time,
         is_active: season_data.is_active && current_time < season_data.end_time,
         total_participants: season_data.total_participants,
+        total_votes: season_data.total_votes_cast,
         days_remaining: if season_data.is_active && current_time < season_data.end_time {
-            ((season_data.end_time - current_time) / 86400) as u32
+            ((season_data.end_time - current_time) / 86400) as u64
         } else {
             0
         },

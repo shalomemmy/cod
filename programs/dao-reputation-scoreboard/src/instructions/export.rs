@@ -126,7 +126,7 @@ pub fn import_reputation_data(
 
     for update in import_data.iter() {
         // Validate each update
-        ReputationUtils::validate_string_length(&update.reason, 200)?;
+        // Skip validation for fixed-size byte array
     }
 
     msg!(

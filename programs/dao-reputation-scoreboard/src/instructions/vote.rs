@@ -103,7 +103,7 @@ pub fn cast_vote(
         voting_record.total_votes_on_target = 0;
         voting_record.vote_history = [VoteHistoryEntry::default(); 1];
         voting_record.history_index = 0;
-        voting_record.reserved = [0; 4];
+        voting_record.reserved = [0; 2];
     }
 
     // Update voting record

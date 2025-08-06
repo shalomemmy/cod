@@ -85,13 +85,11 @@ pub fn export_leaderboard(
     let mock_leaderboard = vec![
         LeaderboardEntry {
             user: Pubkey::default(),
-            user: Pubkey::default(),
             score: 10000,
             category: ReputationCategory::Governance,
             rank: 1,
         },
         LeaderboardEntry {
-            user: Pubkey::default(),
             user: Pubkey::default(),
             score: 8500,
             category: ReputationCategory::Development,
@@ -128,7 +126,7 @@ pub fn import_reputation_data(
         ReputationError::BulkOperationTooLarge
     );
 
-    for update in import_data.iter() {
+    for _update in import_data.iter() {
         // Validate each update
         // Skip validation for fixed-size byte array
     }

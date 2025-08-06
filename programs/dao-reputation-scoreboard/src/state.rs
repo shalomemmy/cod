@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-/// Global reputation system configuration
+/// Global reputation system configuration - ZERO RESERVED
 #[account]
 pub struct ReputationConfig {
     /// Admin wallet that can modify system parameters
@@ -33,8 +33,7 @@ pub struct ReputationConfig {
     pub initialized_at: i64,
     /// Last config update timestamp
     pub last_updated: i64,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 1], // Reduced from 2 to 1
+    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl ReputationConfig {
@@ -53,11 +52,10 @@ impl ReputationConfig {
         2 + // decay_rate
         1 + // decay_enabled
         8 + // initialized_at
-        8 + // last_updated
-        1; // reserved (MAXIMUM OPTIMIZED)
+        8; // last_updated - NO RESERVED
 }
 
-/// Individual user reputation data
+/// Individual user reputation data - ZERO RESERVED
 #[account]
 pub struct UserReputation {
     /// User's wallet public key
@@ -88,8 +86,7 @@ pub struct UserReputation {
     pub votes_cast: u64,
     /// Seasonal points [governance, development, community, treasury]
     pub seasonal_points: [u64; 4],
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 1], // Reduced from 2 to 1
+    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl UserReputation {
@@ -107,8 +104,7 @@ impl UserReputation {
         4 + // longest_streak
         4 + // best_season_rank
         8 + // votes_cast
-        (8 * 4) + // seasonal_points
-        1; // reserved (MAXIMUM OPTIMIZED)
+        (8 * 4); // seasonal_points - NO RESERVED
 
     /// Calculate total score with category weights
     pub fn calculate_total_score(&mut self, category_weights: &[u16; 4]) -> u64 {
@@ -170,7 +166,7 @@ pub enum AchievementType {
     SeasonWinner = 7,
 }
 
-/// Vote history entry
+/// Vote history entry - ULTRA MINIMAL
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, Default, Debug)]
 pub struct VoteHistoryEntry {
     pub category: ReputationCategory,
@@ -192,7 +188,7 @@ impl VoteHistoryEntry {
     }
 }
 
-/// Voting record between two users
+/// Voting record between two users - ZERO RESERVED
 #[account]
 pub struct VotingRecord {
     /// Voter's public key
@@ -211,8 +207,7 @@ pub struct VotingRecord {
     pub vote_history: [VoteHistoryEntry; 1],
     /// Current history index (circular buffer)
     pub history_index: u8,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 1], // Reduced from 2 to 1
+    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl VotingRecord {
@@ -224,8 +219,7 @@ impl VotingRecord {
         8 + // last_daily_reset
         4 + // total_votes_on_target
         (VoteHistoryEntry::LEN * 1) + // vote_history (MAXIMUM OPTIMIZED)
-        1 + // history_index
-        1; // reserved (MAXIMUM OPTIMIZED)
+        1; // history_index - NO RESERVED
 
     /// Check if daily vote limit is reached
     pub fn is_daily_limit_reached(&mut self, limit: u8, current_time: i64) -> bool {
@@ -268,7 +262,7 @@ impl LeaderboardEntry {
         1; // category
 }
 
-/// Season competition data - WITH REQUIRED FIELDS
+/// Season competition data - ZERO RESERVED
 #[account]
 pub struct SeasonData {
     /// Season identifier
@@ -289,8 +283,7 @@ pub struct SeasonData {
     pub total_votes_cast: u64,
     /// Most active category this season
     pub most_active_category: ReputationCategory,
-    /// Reserved space for future upgrades (MAXIMUM OPTIMIZED)
-    pub reserved: [u8; 1], // Reduced from 2 to 1
+    // NO RESERVED FIELD - ZERO WASTE
 }
 
 impl SeasonData {
@@ -303,8 +296,7 @@ impl SeasonData {
         4 + // total_participants
         1 + // rewards_distributed
         8 + // total_votes_cast
-        1 + // most_active_category
-        1; // reserved (MAXIMUM OPTIMIZED)
+        1; // most_active_category - NO RESERVED
 }
 
 /// Additional types for complex operations

@@ -131,15 +131,11 @@ pub fn calculate_decay_preview(
     );
 
     let preview = DecayPreview {
-        user,
-        current_total_score: user_reputation.total_score,
-        projected_total_score,
-        current_role_level: user_reputation.role_level,
-        projected_role_level,
-        days_inactive: days_inactive as u32,
-        total_points_to_decay: total_decay,
-        decay_factor,
-        decay_enabled: config.decay_enabled,
+        current_points: user_reputation.category_points,
+        points_after_decay: new_category_points,
+        decay_amount: decay_amounts,
+        days_since_activity: days_inactive as u64,
+        will_decay: config.decay_enabled && days_inactive >= 7,
     };
 
     Ok(preview)
@@ -227,14 +223,7 @@ pub fn get_decay_status(
 //     pub decay_enabled: bool,
 // }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
-pub struct DecayStatus {
-    pub user: Pubkey,
-    pub days_since_activity: u32,
-    pub decay_factor: u64,
-    pub points_at_risk: u64,
-    pub decay_enabled: bool,
-}
+// DecayStatus is now defined in state.rs - removed duplicate
 
 #[derive(Accounts)]
 #[instruction(user: Pubkey)]
